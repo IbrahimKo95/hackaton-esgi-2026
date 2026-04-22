@@ -22,9 +22,7 @@ RUN npm ci --omit=dev
 COPY --from=build /app/.next ./.next
 COPY --from=build /app/public ./public
 COPY --from=build /app/next.config.ts ./next.config.ts
-COPY --from=build /app/node_modules/.prisma ./node_modules/.prisma
-COPY --from=build /app/node_modules/@prisma ./node_modules/@prisma
-COPY --from=build /app/app/generated ./app/generated
+COPY --from=build /app/app/generated ./app/generated  # ✅ remplace les deux lignes .prisma
 COPY --from=build /app/prisma ./prisma
 EXPOSE 3000
 CMD ["sh", "-c", "npx prisma migrate deploy && npm run start -- --hostname 0.0.0.0 --port 3000"]
