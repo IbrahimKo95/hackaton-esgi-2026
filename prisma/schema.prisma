@@ -56,6 +56,8 @@ model User {
   image         String?
   phone         String?
   subscribed    Boolean   @default(false)
+  reservationCount Int    @default(0)
+  rank          UserRank  @default(BASIC)
   createdAt     DateTime  @default(now())
 
   roleId Int?
@@ -68,8 +70,14 @@ model User {
   reviews           Review[]
 
   userPromotions UserPromotion[]
+}
 
-  userBadges UserBadge[]
+enum UserRank {
+  BASIC
+  BRONZE
+  SILVER
+  GOLD
+  PREMIUM
 }
 
 model Role {
@@ -134,8 +142,11 @@ model Distinction {
   type DistinctionType
   year Int
 
-  restaurantId Int
-  restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  restaurantId Int?
+  restaurant   Restaurant? @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+
+  hotelId Int?
+  hotel   Hotel? @relation(fields: [hotelId], references: [id], onDelete: Cascade)
 }
 
 enum DistinctionType {
@@ -145,6 +156,9 @@ enum DistinctionType {
   BIB_GOURMAND
   GREEN_STAR
   RECOMMENDED
+  ONE_KEY
+  TWO_KEYS
+  THREE_KEYS
 }
 
 model Tag {
@@ -204,10 +218,12 @@ model Hotel {
   name       String
   imageUrl   String?
   starRating Int     @default(0)
+  createdAt   DateTime @default(now())
 
   addressId Int
   address   Address @relation(fields: [addressId], references: [id])
 
+  distinctions      Distinction[]
   rooms             HotelRoom[]
   hotelReservations HotelReservation[]
 }
@@ -266,39 +282,6 @@ model VerticalMedia {
   restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
 }
 
-model Badge {
-  id          Int           @id @default(autoincrement())
-  name        String        @unique
-  description String?
-  imageUrl    String?
-  category    BadgeCategory
-  threshold   Int
-  promotionId Int?
-  promotion   Promotion?    @relation(fields: [promotionId], references: [id])
-
-  userBadges UserBadge[]
-}
-
-enum BadgeCategory {
-  RESERVATION // X réservations effectuées
-  EXPLORER // X villes différentes visitées
-  LOYALTY // X fois dans le même restaurant
-  REVIEWER // X avis laissés
-}
-
-model UserBadge {
-  id         Int      @id @default(autoincrement())
-  obtainedAt DateTime @default(now())
-
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  badgeId Int
-  badge   Badge @relation(fields: [badgeId], references: [id])
-
-  @@unique([userId, badgeId])
-}
-
 model Promotion {
   id              Int      @id @default(autoincrement())
   title           String
@@ -313,8 +296,6 @@ model Promotion {
   restaurant   Restaurant? @relation(fields: [restaurantId], references: [id])
 
   userPromotions UserPromotion[]
-
-  badges Badge[]
 }
 
 model UserPromotion {

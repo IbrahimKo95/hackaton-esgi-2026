@@ -1,6 +1,8 @@
 import { prisma } from "@/lib/server/prisma";
 import { HttpError } from "@/lib/server/http";
+import type { Prisma } from "@/app/generated/prisma/client";
 import type { ReservationCreateInput } from "@/lib/server/schemas/reservations";
+import { getRankFromReservationCount } from "@/lib/server/rank/service";
 
 function getUtcDayBounds(date: Date): { start: Date; end: Date } {
   const start = new Date(
@@ -61,12 +63,47 @@ export async function createReservationForRestaurant(
     });
   }
 
-  return prisma.reservation.create({
-    data: {
-      userId,
-      restaurantId,
-      date: input.date,
-      guestCount: input.guestCount,
-    },
+  return prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+    const reservation = await tx.reservation.create({
+      data: {
+        userId,
+        restaurantId,
+        date: input.date,
+        guestCount: input.guestCount,
+      },
+    });
+
+    const nextReservationCount = await tx.user.update({
+      where: { id: userId },
+      data: {
+        reservationCount: {
+          increment: 1,
+        },
+      },
+      select: {
+        reservationCount: true,
+      },
+    });
+
+    const nextRank = getRankFromReservationCount(nextReservationCount.reservationCount);
+
+    const rankedUser = await tx.user.update({
+      where: { id: userId },
+      data: {
+        rank: nextRank,
+      },
+      select: {
+        reservationCount: true,
+        rank: true,
+      },
+    });
+
+    return {
+      ...reservation,
+      userProgress: {
+        reservationCount: rankedUser.reservationCount,
+        rank: rankedUser.rank,
+      },
+    };
   });
 }
