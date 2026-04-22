@@ -18,7 +18,7 @@ jobs:
           key:      ${{ secrets.AZURE_SSH_KEY }}
           port:     ${{ secrets.AZURE_PORT }}
           script: |
-            cd /opt/michelin
+            cd ~/hackaton-esgi-2026
 
             echo "📥 Pull des dernières modifications..."
             git pull origin develop
