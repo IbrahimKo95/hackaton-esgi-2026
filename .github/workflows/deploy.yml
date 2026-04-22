@@ -1,0 +1,40 @@
+name: Deploy to Azure
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host:     ${{ secrets.AZURE_HOST }}
+          username: ${{ secrets.AZURE_USER }}
+          key:      ${{ secrets.AZURE_SSH_KEY }}
+          port:     ${{ secrets.AZURE_PORT }}
+          script: |
+            cd /opt/michelin
+
+            echo "📥 Pull des dernières modifications..."
+            git pull origin develop
+
+            echo "🔧 Création du .env..."
+            cat > .env << EOF
+            POSTGRES_USER=${{ secrets.POSTGRES_USER }}
+            POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
+            POSTGRES_DB=${{ secrets.POSTGRES_DB }}
+            DATABASE_URL_DOCKER=${{ secrets.DB_URL }}
+            EOF
+
+            echo "🐳 Rebuild et redémarrage..."
+            docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+
+            echo "🧹 Nettoyage des anciennes images..."
+            docker image prune -f
+
+            echo "✅ Deploy terminé !"

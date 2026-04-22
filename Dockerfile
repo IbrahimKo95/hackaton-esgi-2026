@@ -6,12 +6,13 @@ COPY package.json package-lock.json ./
 RUN npm ci
 COPY . .
 EXPOSE 3000
-CMD ["npm", "run", "dev", "--", "--hostname", "0.0.0.0", "--port", "3000"]
+CMD ["sh", "-c", "npx prisma migrate deploy && npm run dev -- --hostname 0.0.0.0 --port 3000"]
 
 FROM base AS build
 COPY package.json package-lock.json ./
 RUN npm ci
 COPY . .
+RUN npx prisma generate
 RUN npm run build
 
 FROM base AS prod
@@ -23,6 +24,7 @@ COPY --from=build /app/public ./public
 COPY --from=build /app/next.config.ts ./next.config.ts
 COPY --from=build /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=build /app/node_modules/@prisma ./node_modules/@prisma
+COPY --from=build /app/app/generated ./app/generated
 COPY --from=build /app/prisma ./prisma
 EXPOSE 3000
-CMD ["npm", "run", "start", "--", "--hostname", "0.0.0.0", "--port", "3000"]
+CMD ["sh", "-c", "npx prisma migrate deploy && npm run start -- --hostname 0.0.0.0 --port 3000"]
