@@ -1,5 +1,5 @@
 import { interpretRestaurantSearchQuery, type RestaurantSearchCriteria } from "@/lib/server/agent";
-import { listRestaurants } from "@/lib/server/restaurants/service";
+import {listGoodDealRestaurants, listRestaurants} from "@/lib/server/restaurants/service";
 import { getRestaurantBudgetEstimate } from "@/lib/server/restaurants/budget";
 
 function normalize(value: string) {
@@ -56,36 +56,22 @@ function matchesCriteria(restaurant: Awaited<ReturnType<typeof listRestaurants>>
     return true;
 }
 
-export async function searchRestaurants(query: string | undefined, mode: "normal" | "ai") {
-    const restaurants = await listRestaurants();
+export async function searchRestaurants(query: string | undefined, goodDeal: boolean = false) {
+    let restaurants = await listRestaurants();
+    if(goodDeal) {
+        restaurants = await listGoodDealRestaurants();
+    }
     const search = query?.trim();
 
     if (!search) {
         return restaurants;
     }
 
-    if (mode === "normal") {
-        const normalizedSearch = normalize(search);
+    const normalizedSearch = normalize(search);
 
-        return restaurants.filter((restaurant) => {
-            const fields = getRestaurantSearchText(restaurant);
-            return fields.includes(normalizedSearch);
-        });
-    }
+    return restaurants.filter((restaurant) => {
+        const fields = getRestaurantSearchText(restaurant);
+        return fields.includes(normalizedSearch);
+    });
 
-    const criteria = await interpretRestaurantSearchQuery(search);
-
-    const normalizedCriteria: RestaurantSearchCriteria = {
-        city: criteria?.city ?? null,
-        budgetMax: criteria?.budgetMax ?? null,
-        cuisines: criteria?.cuisines ?? [],
-        ambiances: criteria?.ambiances ?? [],
-        keywords: criteria?.keywords ?? [],
-    };
-
-    if (!criteria) {
-        return restaurants.filter((restaurant) => getRestaurantSearchText(restaurant).includes(normalize(search)));
-    }
-
-    return restaurants.filter((restaurant) => matchesCriteria(restaurant, normalizedCriteria));
 }

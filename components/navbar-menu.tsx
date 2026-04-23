@@ -21,7 +21,7 @@ type NavbarMenuProps = {
 const defaultItems: MenuItem[] = [
   { label: "Restaurants", href: "/restaurant" },
   { label: "Hotels", href: "/hotel" },
-  { label: "Bon plan MICHELIN", href: "#" },
+  { label: "Bon plan MICHELIN", href: "/restaurant/good-deal" },
   { label: "Mon programme de fidelite", href: "/fidelite" },
   { label: "Nous contacter", href: "#" },
   { label: "Preferences", href: "#" },

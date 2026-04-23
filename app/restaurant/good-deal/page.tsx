@@ -19,7 +19,7 @@ const FALLBACK_CARD_IMAGE =
 
 export default async function RestaurantPage({ searchParams }: RestaurantPageProps) {
     const { q } = await Promise.resolve(searchParams ?? {});
-    const filteredRestaurants = await searchRestaurants(q);
+    const filteredRestaurants = await searchRestaurants(q, true);
 
     return (
         <main className={`${figtree.className} min-h-screen bg-gradient-to-b from-[#f4f4f4] to-white text-[#141414]`}>
@@ -44,7 +44,7 @@ export default async function RestaurantPage({ searchParams }: RestaurantPagePro
                     </div>
 
                     <div className="absolute left-0 top-[70px] w-full px-5 text-white">
-                        <h1 className="mb-3 text-[38px] font-semibold leading-none">Restaurants</h1>
+                        <h1 className="mb-3 text-[38px] font-semibold leading-none">Bon Plan Michelin</h1>
                         <RestaurantSearchBar
                             key={q ?? ""}
                             initialQuery={q ?? ""}

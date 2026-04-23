@@ -30,6 +30,30 @@ export async function listRestaurants() {
   });
 }
 
+export async function listGoodDealRestaurants() {
+  return prisma.restaurant.findMany({
+    include: {
+      address: true,
+      images: true,
+      distinctions: true,
+      ambiances: {
+        include: {
+          ambianceRestaurant: true,
+        },
+      },
+      typesCuisine: {
+        include: {
+          typeCuisine: true,
+        },
+      },
+    },
+    orderBy: {
+      priceRange: "asc",
+    },
+    take: 5,
+  });
+}
+
 export async function getRestaurantById(id: number) {
   const restaurant = await prisma.restaurant.findUnique({
     where: { id },
