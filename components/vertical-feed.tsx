@@ -54,6 +54,7 @@ const formatAddress = ({ street, postalCode, city, country }: VerticalFeedItem["
 
 export default function VerticalFeed({ items }: VerticalFeedProps) {
     const scrollContainerRef = useRef<HTMLElement>(null);
+    const videoRefs = useRef<Record<number, HTMLVideoElement | null>>({});
     const [activeIndex, setActiveIndex] = useState(0);
     const [videoFailures, setVideoFailures] = useState<Record<number, boolean>>({});
 
@@ -117,6 +118,29 @@ export default function VerticalFeed({ items }: VerticalFeedProps) {
         };
     }, [items]);
 
+    useEffect(() => {
+        for (const [indexAsText, videoElement] of Object.entries(videoRefs.current)) {
+            if (!videoElement) {
+                continue;
+            }
+
+            const index = Number.parseInt(indexAsText, 10);
+            const isActive = index === activeIndex;
+
+            if (!isActive) {
+                videoElement.pause();
+                continue;
+            }
+
+            videoElement.muted = true;
+            videoElement.playsInline = true;
+
+            void videoElement.play().catch(() => {
+                // Laisser le fallback image prendre le relais via onError si nécessaire.
+            });
+        }
+    }, [activeIndex]);
+
     const activeItem = items[activeIndex] ?? items[0];
 
     const destination = useMemo(() => {
@@ -165,42 +189,46 @@ export default function VerticalFeed({ items }: VerticalFeedProps) {
                         data-vertical-item-index={index}
                         className="relative min-h-screen w-full snap-start"
                     >
-                        {isVideoUrl(item.url) && !videoFailures[item.id] ? (
-                            <video
-                                src={item.url}
-                                autoPlay
-                                muted
-                                loop
-                                playsInline
-                                preload="metadata"
-                                poster={item.restaurant.imageUrl ?? undefined}
-                                onError={() => {
-                                    markVideoAsFailed(item.id);
-                                }}
-                                onStalled={() => {
-                                    markVideoAsFailed(item.id);
-                                }}
-                                className="absolute inset-0 h-full w-full object-cover"
-                            />
-                        ) : item.restaurant.imageUrl ? (
-                            <Image
-                                src={item.restaurant.imageUrl}
-                                alt={item.description ?? `${item.restaurant.name} aperçu`}
-                                fill
-                                priority={index === 0}
-                                className="object-cover"
-                            />
-                        ) : isVideoUrl(item.url) ? (
-                            <div className="absolute inset-0 bg-gradient-to-br from-zinc-950 via-zinc-800 to-zinc-700" />
-                        ) : (
-                            <Image
-                                src={item.url}
-                                alt={item.description ?? `${item.restaurant.name} média ${index + 1}`}
-                                fill
-                                priority={index === 0}
-                                className="object-cover"
-                            />
-                        )}
+                        <div className="absolute inset-0 flex items-center justify-center bg-black">
+                            <div className="relative h-full w-full md:h-full md:w-auto md:aspect-[9/16]">
+                                {isVideoUrl(item.url) && !videoFailures[item.id] ? (
+                                    <video
+                                        ref={(element) => {
+                                            videoRefs.current[index] = element;
+                                        }}
+                                        src={item.url}
+                                        autoPlay
+                                        muted
+                                        loop
+                                        playsInline
+                                        preload="metadata"
+                                        poster={item.restaurant.imageUrl ?? undefined}
+                                        onError={() => {
+                                            markVideoAsFailed(item.id);
+                                        }}
+                                        className="absolute inset-0 h-full w-full object-cover"
+                                    />
+                                ) : item.restaurant.imageUrl ? (
+                                    <Image
+                                        src={item.restaurant.imageUrl}
+                                        alt={item.description ?? `${item.restaurant.name} aperçu`}
+                                        fill
+                                        priority={index === 0}
+                                        className="object-cover"
+                                    />
+                                ) : isVideoUrl(item.url) ? (
+                                    <div className="absolute inset-0 bg-gradient-to-br from-zinc-950 via-zinc-800 to-zinc-700" />
+                                ) : (
+                                    <Image
+                                        src={item.url}
+                                        alt={item.description ?? `${item.restaurant.name} média ${index + 1}`}
+                                        fill
+                                        priority={index === 0}
+                                        className="object-cover"
+                                    />
+                                )}
+                            </div>
+                        </div>
 
                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/15 to-black/20" />
                     </article>

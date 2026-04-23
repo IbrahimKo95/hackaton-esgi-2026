@@ -87,36 +87,36 @@ type VerticalMediaSeed = {
 
 const verticalClipLibrary: readonly Readonly<{ url: string; description: string }>[] = [
   {
-    url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-    description: "Plan serré en cuisine, cuisson minute",
+    url: "https://archive.org/download/whctvct-West_Hartford_Lens_-_GastroPark_Food_Trucks_October_2023/West_Hartford_Lens_-_GastroPark_Food_Trucks_October_2023.mp4",
+    description: "Cuisine minute et préparation en food truck (2023)",
   },
   {
-    url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
-    description: "Service chef en salle, ambiance dîner",
+    url: "https://archive.org/download/comfl-Miami_Eats_-_Discover_Sushi_Chef_Japanese_Restaurant/Miami_Eats_-_Discover_Sushi_Chef_Japanese_Restaurant.mp4",
+    description: "Chef au comptoir sushi et dressage en service (2024)",
   },
   {
-    url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
-    description: "Dressage rapide, finition sauce",
+    url: "https://archive.org/download/comfl-Miami_Eats_featuring_Mykonos_Restaurant/Miami_Eats_featuring_Mykonos_Restaurant.mp4",
+    description: "Ambiance de salle et présentation de plats en restaurant (2025)",
   },
   {
-    url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
-    description: "Atmosphère table conviviale",
+    url: "https://archive.org/download/Authentic_Ramen_Restaurant_opens_in_Westford_-_WestfordCAT_News/Authentic_Ramen_Restaurant_opens_in_Westford_-_WestfordCAT_News.mp4",
+    description: "Ouverture de restaurant ramen et service en salle (2025)",
   },
   {
-    url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
-    description: "Service boisson, séquence dynamique",
+    url: "https://archive.org/download/cotga-Sounds_of_Tucker_Restaurant_Week_2026/Sounds_of_Tucker_Restaurant_Week_2026.mp4",
+    description: "Restaurant week, affluence en salle et service (2026)",
   },
   {
-    url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-    description: "Préparation express en cuisine",
+    url: "https://archive.org/download/whctvct-Burger_Lovers_Unite_at_Tonight_s_Epic_Blue_Back_Burger_Bash/Burger_Lovers_Unite_at_Tonight_s_Epic_Blue_Back_Burger_Bash.mp4",
+    description: "Cuisine burger, sortie de passe et service client (2025)",
   },
   {
-    url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
-    description: "Dressage final avant envoi",
+    url: "https://archive.org/download/whctvct-Nepal_Relief_Event_at_Bombay_Olive_-_Dine_and_Help_Nepal/Nepal_Relief_Event_at_Bombay_Olive_-_Dine_and_Help_Nepal.mp4",
+    description: "Service en salle lors d'un événement restaurant (2025)",
   },
   {
-    url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4",
-    description: "Moment vin et accords",
+    url: "https://archive.org/download/whctvct-Grinch_Cocktail_-_Two_Guys_and_a_Lotta_Wine_15th_Annual_Bubbles_Show/Grinch_Cocktail_-_Two_Guys_and_a_Lotta_Wine_15th_Annual_Bubbles_Show.mp4",
+    description: "Service boisson, accords et gestuelle de bar (2025)",
   },
 ] as const;
 
