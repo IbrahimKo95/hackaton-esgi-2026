@@ -1,7 +1,6 @@
 import { compare } from "bcryptjs";
-import type { NextAuthOptions, Session } from "next-auth";
+import { getServerSession, type NextAuthOptions, type Session } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { getServerSession } from "next-auth/next";
 
 import { prisma } from "@/lib/server/prisma";
 import { HttpError } from "@/lib/server/http";

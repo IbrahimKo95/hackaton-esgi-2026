@@ -19,7 +19,7 @@ const defaultItems: MenuItem[] = [
   { label: "Restaurants", href: "#" },
   { label: "Hotels", href: "/hotel" },
   { label: "Bon plan MICHELIN", href: "#" },
-  { label: "Mon programme de fidelite", href: "#" },
+  { label: "Mon programme de fidelite", href: "/fidelite" },
   { label: "Nous contacter", href: "#" },
   { label: "Preferences", href: "#" },
 ];
@@ -91,7 +91,7 @@ export default function NavbarMenu({
               </button>
             </div>
 
-            <nav className="flex flex-col gap-4 text-[28px] font-semibold leading-[1.12] tracking-[-0.02em] sm:gap-5 sm:text-[40px] sm:leading-[1.04]">
+            <nav className="flex flex-col gap-3 text-[22px] font-semibold leading-[1.14] tracking-[-0.02em] sm:gap-5 sm:text-[40px] sm:leading-[1.04]">
               {items.map((item) => (
                 <Link
                   key={item.label}
@@ -104,7 +104,7 @@ export default function NavbarMenu({
               ))}
             </nav>
 
-            <p className="mt-16 text-[30px] text-black/70">
+            <p className="mt-10 text-[18px] text-black/70 sm:mt-16 sm:text-[30px]">
               {language} | {currency}
             </p>
           </div>
