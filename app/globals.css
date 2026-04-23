@@ -22,3 +22,44 @@
 
 .animate-slide-up   { animation: slide-up   0.3s cubic-bezier(0.32, 0.72, 0, 1); }
 .animate-fade-scale { animation: fade-scale 0.2s ease-out; }
+
+.leaflet-container {
+    background: #e8e3dc;
+    font-family: var(--font-figtree), sans-serif;
+}
+
+.leaflet-control-container .leaflet-control-zoom {
+    border: 0;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+}
+
+.leaflet-control-container .leaflet-control-zoom a {
+    border: 0;
+}
+
+.leaflet-restaurant-marker {
+    display: block;
+    width: 16px;
+    height: 16px;
+    border-radius: 9999px;
+    border: 2px solid #ffffff;
+    background: #7f1919;
+    box-shadow: 0 0 0 8px rgba(127, 25, 25, 0.16), 0 10px 20px rgba(0, 0, 0, 0.25);
+}
+
+.leaflet-restaurant-marker.is-active {
+    width: 20px;
+    height: 20px;
+    background: #c1282d;
+    box-shadow: 0 0 0 10px rgba(193, 40, 45, 0.2), 0 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+.leaflet-user-marker {
+    display: block;
+    width: 16px;
+    height: 16px;
+    border-radius: 9999px;
+    border: 2px solid #ffffff;
+    background: #2b6cff;
+    box-shadow: 0 0 0 8px rgba(43, 108, 255, 0.18);
+}

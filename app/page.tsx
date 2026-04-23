@@ -105,7 +105,7 @@ export default async function Home({ searchParams }: HomePageProps) {
 
                 <section className="mt-5 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-[1.4fr_1fr]">
                     <Link
-                        href="/"
+                        href="/map"
                         className="group relative block min-h-[152px] overflow-hidden rounded-[22px] shadow-[0_12px_22px_rgba(0,0,0,0.12)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#7f1919]"
                     >
                         <Image

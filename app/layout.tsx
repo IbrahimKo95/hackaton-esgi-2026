@@ -3,6 +3,7 @@ import { Figtree } from "next/font/google";
 import ChatbotFab from "@/components/chatbot-fab";
 import "./globals.css";
 import Providers from "@/app/providers";
+import Script from "next/script";
 
 const figtree = Figtree({
   variable: "--font-figtree",
@@ -28,6 +29,16 @@ export default function RootLayout({
       lang="fr"
       className={`${figtree.variable} h-full antialiased`}
     >
+      <head>
+        <link
+          rel="stylesheet"
+          href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        />
+        <Script
+          src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+          strategy="beforeInteractive"
+        />
+      </head>
       <body className={`${figtree.className} min-h-full flex flex-col`}>
       <Providers>
         {children}
