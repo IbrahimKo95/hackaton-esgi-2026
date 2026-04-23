@@ -1,5 +1,6 @@
 "use client";
 
+import AuthModal from "@/app/components/auth/AuthModal";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
@@ -32,7 +33,17 @@ export default function NavbarMenu({
   triggerClassName = "",
 }: NavbarMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [authOpen, setAuthOpen] = useState(false);
   const { data: session } = useSession();
+
+  const openAuthModal = () => {
+    setIsOpen(false);
+    setAuthOpen(true);
+  };
+
+  const closeAuthModal = () => {
+    setAuthOpen(false);
+  };
 
   useEffect(() => {
     if (!isOpen) {
@@ -100,7 +111,15 @@ export default function NavbarMenu({
                 <p className="mt-1 text-[18px] font-semibold leading-tight text-black">{session.user.name ?? "Utilisateur"}</p>
                 {session.user.email ? <p className="mt-0.5 text-[14px] text-black/65">{session.user.email}</p> : null}
               </div>
-            ) : null}
+            ) : (
+              <button
+                type="button"
+                onClick={openAuthModal}
+                className="mb-8 inline-flex items-center justify-center rounded-full border border-[#c1282d] px-5 py-3 text-[15px] font-semibold text-[#c1282d] transition hover:bg-[#c1282d] hover:text-white"
+              >
+                Se connecter
+              </button>
+            )}
 
             <nav className="flex flex-col gap-4 text-2xl font-semibold tracking-[-0.02em] sm:text-4xl sm:gap-5">
               {items.map((item) => (
@@ -121,6 +140,8 @@ export default function NavbarMenu({
           </div>
         </div>
       ) : null}
+
+      <AuthModal isOpen={authOpen} onClose={closeAuthModal} />
     </>
   );
 }

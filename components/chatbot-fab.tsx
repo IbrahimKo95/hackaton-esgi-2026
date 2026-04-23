@@ -50,6 +50,7 @@ function parseAssistantMessage(content: string) {
 
 export default function ChatbotFab() {
     const [isOpen, setIsOpen] = useState(false);
+    const [isReservationOpen, setIsReservationOpen] = useState(false);
     const [messages, setMessages] = useState<ChatMessage[]>([
         { role: "assistant", content: "Bonjour, je peux vous aider pour les restaurants et les hotels." },
     ]);
@@ -80,6 +81,19 @@ export default function ChatbotFab() {
     useEffect(() => {
         bottomRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages, isOpen]);
+
+    useEffect(() => {
+        const handleReservationVisibility = (event: Event) => {
+            const customEvent = event as CustomEvent<{ visible?: boolean }>;
+            setIsReservationOpen(Boolean(customEvent.detail?.visible));
+        };
+
+        window.addEventListener("restaurant-reservation-visibility", handleReservationVisibility);
+
+        return () => {
+            window.removeEventListener("restaurant-reservation-visibility", handleReservationVisibility);
+        };
+    }, []);
 
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -142,17 +156,19 @@ export default function ChatbotFab() {
 
     return (
         <>
-            <button
-                type="button"
-                aria-label="Ouvrir le chatbot"
-                onClick={() => setIsOpen(true)}
-                className="fixed bottom-5 right-5 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-[#c1282d] text-white shadow-[0_18px_36px_rgba(193,40,45,0.35)] transition hover:scale-[1.03] active:scale-95"
-            >
-                <svg viewBox="0 0 24 24" className="h-7 w-7" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M7 8h10M7 12h7" strokeLinecap="round" />
-                    <path d="M5 19l2.8-3H18a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v9a2 2 0 0 0 1.4 1.9Z" strokeLinejoin="round" />
-                </svg>
-            </button>
+            {isReservationOpen ? null : (
+                <button
+                    type="button"
+                    aria-label="Ouvrir le chatbot"
+                    onClick={() => setIsOpen(true)}
+                    className="fixed bottom-5 right-5 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-[#c1282d] text-white shadow-[0_18px_36px_rgba(193,40,45,0.35)] transition hover:scale-[1.03] active:scale-95"
+                >
+                    <svg viewBox="0 0 24 24" className="h-7 w-7" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M7 8h10M7 12h7" strokeLinecap="round" />
+                        <path d="M5 19l2.8-3H18a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v9a2 2 0 0 0 1.4 1.9Z" strokeLinejoin="round" />
+                    </svg>
+                </button>
+            )}
 
             {isOpen ? (
                 <div className="fixed inset-0 z-50 bg-black/30 backdrop-blur-[2px]">
