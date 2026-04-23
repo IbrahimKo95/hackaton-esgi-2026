@@ -19,6 +19,15 @@ export const authOptions: NextAuthOptions = {
   session: {
     strategy: "jwt",
   },
+  logger: {
+    error(code, metadata) {
+      if (code === "JWT_SESSION_ERROR") {
+        return;
+      }
+
+      console.error(code, metadata);
+    },
+  },
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -78,7 +87,11 @@ export const authOptions: NextAuthOptions = {
 };
 
 export async function getAuthSession(): Promise<Session | null> {
-  return getServerSession(authOptions);
+  try {
+    return await getServerSession(authOptions);
+  } catch {
+    return null;
+  }
 }
 
 export async function requireSession(): Promise<Session> {

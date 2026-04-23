@@ -1,7 +1,7 @@
 import HomeGuestAuthTrigger from "@/components/home-guest-auth-trigger";
+import HomeRailSection from "@/components/home-rail-section";
 import NavbarMenu from "@/components/navbar-menu";
-import { getAuthSession } from "@/lib/server/auth";
-import { prisma } from "@/lib/server/prisma";
+import { getHomeRecommendations, getHomeSections } from "@/lib/server/home";
 import { Figtree } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
@@ -15,83 +15,24 @@ type HomePageProps = {
 const HERO_IMAGE =
     "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1800&q=80";
 
-const CATEGORY_CARDS = [
-    {
-        label: "Sortie entre amis",
-        image:
-            "https://images.unsplash.com/photo-1528605248644-14dd04022da1?auto=format&fit=crop&w=900&q=80",
-    },
-    {
-        label: "Date en couple",
-        image:
-            "https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=900&q=80",
-    },
-    {
-        label: "Brunch du dimanche",
-        image:
-            "https://images.unsplash.com/photo-1484723091739-30a097e8f929?auto=format&fit=crop&w=900&q=80",
-    },
-    {
-        label: "Bistronomie",
-        image:
-            "https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=900&q=80",
-    },
-] as const;
-
-const CHIPS = ["Date", "Cocktails", "Végétarien", "Rooftop", "Dîner", "Brunch"] as const;
-
 export default async function Home({ searchParams }: HomePageProps) {
     const { q } = await Promise.resolve(searchParams ?? {});
     const trimmedQuery = q?.trim() ?? "";
 
-    const [session, restaurants] = await Promise.all([
-        getAuthSession(),
-        prisma.restaurant.findMany({
-            where: trimmedQuery
-                ? {
-                    OR: [
-                        {
-                            name: {
-                                contains: trimmedQuery,
-                                mode: "insensitive",
-                            },
-                        },
-                        {
-                            address: {
-                                is: {
-                                    city: {
-                                        contains: trimmedQuery,
-                                        mode: "insensitive",
-                                    },
-                                },
-                            },
-                        },
-                    ],
-                }
-                : undefined,
-            select: {
-                id: true,
-                name: true,
-                address: {
-                    select: {
-                        city: true,
-                    },
-                },
-            },
-            take: 6,
-            orderBy: {
-                createdAt: "desc",
-            },
-        }),
-    ]);
+    const { restaurants, sections } = await getHomeSections();
+    const recommendations = await getHomeRecommendations(restaurants);
 
-    const displayName = session?.user?.name?.trim() || "Invité";
-    const initials = displayName
-        .split(" ")
-        .filter(Boolean)
-        .slice(0, 2)
-        .map((part) => part[0]?.toUpperCase())
-        .join("");
+    const filteredRestaurants = trimmedQuery
+        ? restaurants.filter((restaurant) => {
+              const query = trimmedQuery.toLowerCase();
+
+              return (
+                  restaurant.name.toLowerCase().includes(query) ||
+                  restaurant.city.toLowerCase().includes(query) ||
+                  restaurant.address.toLowerCase().includes(query)
+              );
+          })
+        : [];
 
     return (
         <main className={`${figtree.className} min-h-screen bg-[#f3f3f1] text-[#171717]`}>
@@ -111,10 +52,7 @@ export default async function Home({ searchParams }: HomePageProps) {
                         <div className="flex items-center justify-between gap-3">
                             <div className="flex items-center gap-3">
                                 <HomeGuestAuthTrigger
-                                    isAuthenticated={Boolean(session?.user)}
-                                    displayName={displayName}
-                                    initials={initials || "IN"}
-                                    imageUrl={session?.user?.image}
+                                    fallbackName="Invité"
                                 />
                             </div>
                             <NavbarMenu triggerClassName="text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white" />
@@ -140,20 +78,6 @@ export default async function Home({ searchParams }: HomePageProps) {
                                 className="w-full bg-transparent text-[14px] text-white placeholder:text-white/80 focus:outline-none"
                             />
                         </form>
-
-                        <div className="mt-4 flex gap-2 overflow-x-auto pb-1">
-                            {CHIPS.map((chip) => (
-                                <form key={chip} action="/" method="get" className="shrink-0">
-                                    <input type="hidden" name="q" value={chip} />
-                                    <button
-                                        type="submit"
-                                        className="rounded-full border border-white/45 bg-black/20 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-white/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-                                    >
-                                        {chip}
-                                    </button>
-                                </form>
-                            ))}
-                        </div>
                     </div>
                 </section>
 
@@ -161,14 +85,14 @@ export default async function Home({ searchParams }: HomePageProps) {
                     <section className="mt-5 rounded-[20px] bg-white p-4 shadow-[0_10px_24px_rgba(0,0,0,0.08)] sm:p-5">
                         <p className="text-sm font-semibold">Résultats pour « {trimmedQuery} »</p>
                         <ul className="mt-3 space-y-2">
-                            {restaurants.length > 0 ? (
-                                restaurants.map((restaurant) => (
+                            {filteredRestaurants.length > 0 ? (
+                                filteredRestaurants.map((restaurant) => (
                                     <li key={restaurant.id}>
                                         <Link
                                             href={`/restaurant/${restaurant.id}`}
                                             className="inline-flex rounded-md text-sm font-medium text-[#7f1919] underline-offset-2 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#7f1919]"
                                         >
-                                            {restaurant.name} — {restaurant.address.city}
+                                            {restaurant.name} — {restaurant.city}
                                         </Link>
                                     </li>
                                 ))
@@ -217,25 +141,20 @@ export default async function Home({ searchParams }: HomePageProps) {
                     </Link>
                 </section>
 
-                <section className="mt-7">
-                    <h2 className="text-[24px] font-semibold leading-none tracking-[-0.02em]">Pour vous</h2>
-                    <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                        {CATEGORY_CARDS.map((card) => (
-                            <article key={card.label} className="group overflow-hidden rounded-[18px] bg-white shadow-[0_10px_24px_rgba(0,0,0,0.08)]">
-                                <div className="relative h-36 overflow-hidden">
-                                    <Image
-                                        src={card.image}
-                                        alt={card.label}
-                                        fill
-                                        className="object-cover transition duration-500 group-hover:scale-105"
-                                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                                    />
-                                </div>
-                                <p className="px-3 py-3 text-sm font-semibold">{card.label}</p>
-                            </article>
-                        ))}
-                    </div>
-                </section>
+                <HomeRailSection
+                    title={recommendations.title}
+                    description={recommendations.description}
+                    restaurants={recommendations.restaurants}
+                />
+
+                {sections.map((section) => (
+                    <HomeRailSection
+                        key={section.key}
+                        title={section.title}
+                        description={section.description}
+                        restaurants={section.restaurants}
+                    />
+                ))}
             </div>
         </main>
     );

@@ -1,6 +1,7 @@
 "use client";
 
 import AuthModal from "@/app/components/auth/AuthModal";
+import Image from "next/image";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
@@ -90,8 +91,9 @@ export default function NavbarMenu({
           />
           <div className="relative h-[75vh] w-full overflow-auto rounded-b-[28px] bg-white px-7 pb-8 pt-6 sm:h-full sm:w-[420px] sm:min-w-[280px] sm:rounded-none">
             <div className="mb-10 flex items-center justify-between">
-              <img src="/star.svg" alt="Logo" className="h-10 w-auto"/>
-              {/*<span className="text-[30px] text-[#c1282d]">✽</span>*/}
+              <Link href="/" className="inline-flex items-center" onClick={() => setIsOpen(false)} aria-label="Retour à l'accueil">
+                <Image src="/star.svg" alt="Logo" width={40} height={40} className="h-10 w-auto" />
+              </Link>
                 <button
                   aria-label="Fermer le menu"
                   className="rounded-full p-2 transition hover:bg-black/5"
