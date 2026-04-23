@@ -78,6 +78,62 @@ type ImageSeed = {
   alt: string;
 };
 
+type VerticalMediaSeed = {
+  url: string;
+  description?: string;
+  thumbnailUrl?: string;
+  title?: string;
+};
+
+const verticalClipLibrary: readonly Readonly<{ url: string; description: string }>[] = [
+  {
+    url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+    description: "Plan serré en cuisine, cuisson minute",
+  },
+  {
+    url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+    description: "Service chef en salle, ambiance dîner",
+  },
+  {
+    url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+    description: "Dressage rapide, finition sauce",
+  },
+  {
+    url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
+    description: "Atmosphère table conviviale",
+  },
+  {
+    url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
+    description: "Service boisson, séquence dynamique",
+  },
+  {
+    url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+    description: "Préparation express en cuisine",
+  },
+  {
+    url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+    description: "Dressage final avant envoi",
+  },
+  {
+    url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4",
+    description: "Moment vin et accords",
+  },
+] as const;
+
+function buildRestaurantVerticalMedias(restaurantName: string, restaurantIndex: number): VerticalMediaSeed[] {
+  const clipsPerRestaurant = restaurantIndex % 3 === 0 ? 3 : 2;
+  const startIndex = (restaurantIndex * 2) % verticalClipLibrary.length;
+
+  return Array.from({ length: clipsPerRestaurant }, (_, offset) => {
+    const clip = verticalClipLibrary[(startIndex + offset) % verticalClipLibrary.length];
+
+    return {
+      url: clip.url,
+      description: `${clip.description} · ${restaurantName}`,
+    };
+  });
+}
+
 type RestaurantSeed = {
   name: string;
   link: string;
@@ -90,6 +146,7 @@ type RestaurantSeed = {
   ambiances: readonly ReferenceCode[];
   distinctions: readonly { type: keyof typeof DistinctionType; year: number }[];
   images: readonly ImageSeed[];
+  verticalMedias?: readonly VerticalMediaSeed[];
   imageUrl?: string;
 };
 
@@ -130,6 +187,10 @@ const restaurants: readonly RestaurantSeed[] = [
       { url: "https://images.unsplash.com/photo-1551218808-94e220e084d2?auto=format&fit=crop&w=1400&q=80", alt: "Assiette végétale signature" },
       { url: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1400&q=80", alt: "Table dressée pour un service gastronomique" },
     ],
+    verticalMedias: [
+      { url: "https://cdn.coverr.co/videos/coverr-cooking-vegetables-in-a-pan-5396/1080p.mp4", thumbnailUrl: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&w=400&q=80", title: "Le végétal selon Passard" },
+      { url: "https://cdn.coverr.co/videos/coverr-chef-plating-food-3289/1080p.mp4", thumbnailUrl: "https://images.unsplash.com/photo-1551218808-94e220e084d2?auto=format&fit=crop&w=400&q=80", title: "Dressage signature" },
+    ],
   },
   {
     name: "Le Meurice Alain Ducasse",
@@ -146,6 +207,10 @@ const restaurants: readonly RestaurantSeed[] = [
       { url: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1400&q=80", alt: "Salle du Meurice" },
       { url: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1400&q=80", alt: "Dressage gastronomique" },
       { url: "https://images.unsplash.com/photo-1551024601-bec78aea704b?auto=format&fit=crop&w=1400&q=80", alt: "Mise en scène de table" },
+    ],
+    verticalMedias: [
+      { url: "https://cdn.coverr.co/videos/coverr-elegant-restaurant-interior-1234/1080p.mp4", thumbnailUrl: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=400&q=80", title: "La salle dorée du Meurice" },
+      { url: "https://cdn.coverr.co/videos/coverr-fine-dining-plating-5678/1080p.mp4", thumbnailUrl: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80", title: "L'art du dressage Ducasse" },
     ],
   },
   {
@@ -164,6 +229,10 @@ const restaurants: readonly RestaurantSeed[] = [
       { url: "https://images.unsplash.com/photo-1498654896293-37aacf113fd9?auto=format&fit=crop&w=1400&q=80", alt: "Plat gastronomique au dressage précis" },
       { url: "https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=1400&q=80", alt: "Ambiance lounge du restaurant" },
     ],
+    verticalMedias: [
+      { url: "https://cdn.coverr.co/videos/coverr-pouring-sauce-fine-dining-9012/1080p.mp4", thumbnailUrl: "https://images.unsplash.com/photo-1470337458703-46ad1756a187?auto=format&fit=crop&w=400&q=80", title: "L'art de la sauce" },
+      { url: "https://cdn.coverr.co/videos/coverr-luxury-restaurant-evening-3456/1080p.mp4", thumbnailUrl: "https://images.unsplash.com/photo-1498654896293-37aacf113fd9?auto=format&fit=crop&w=400&q=80", title: "Une soirée au Cheval Blanc" },
+    ],
   },
   {
     name: "Restaurant Guy Savoy",
@@ -180,6 +249,10 @@ const restaurants: readonly RestaurantSeed[] = [
       { url: "https://images.unsplash.com/photo-1529543544282-db52b2f1d1f2?auto=format&fit=crop&w=1400&q=80", alt: "Salle lumineuse de Guy Savoy" },
       { url: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1400&q=80", alt: "Assiette de saison" },
       { url: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1400&q=80", alt: "Table de dîner gastronomique" },
+    ],
+    verticalMedias: [
+      { url: "https://cdn.coverr.co/videos/coverr-chef-cooking-classic-french-7890/1080p.mp4", thumbnailUrl: "https://images.unsplash.com/photo-1529543544282-db52b2f1d1f2?auto=format&fit=crop&w=400&q=80", title: "Les classiques revisités" },
+      { url: "https://cdn.coverr.co/videos/coverr-paris-seine-river-dining-2345/1080p.mp4", thumbnailUrl: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80", title: "Dîner face à la Seine" },
     ],
   },
   {
@@ -198,6 +271,10 @@ const restaurants: readonly RestaurantSeed[] = [
       { url: "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=1400&q=80", alt: "Assiette contemporaine" },
       { url: "https://images.unsplash.com/photo-1505923242677-551b62d4f4e9?auto=format&fit=crop&w=1400&q=80", alt: "Service de table élégant" },
     ],
+    verticalMedias: [
+      { url: "https://cdn.coverr.co/videos/coverr-luxury-wine-service-6789/1080p.mp4", thumbnailUrl: "https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?auto=format&fit=crop&w=400&q=80", title: "Le service du vin" },
+      { url: "https://cdn.coverr.co/videos/coverr-fine-dining-table-setup-1122/1080p.mp4", thumbnailUrl: "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=400&q=80", title: "La mise en place" },
+    ],
   },
   {
     name: "Epicure",
@@ -214,6 +291,10 @@ const restaurants: readonly RestaurantSeed[] = [
       { url: "https://images.unsplash.com/photo-1424847651672-bf20a4b0982b?auto=format&fit=crop&w=1400&q=80", alt: "Salle d'Epicure" },
       { url: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1400&q=80", alt: "Plat signature d'Epicure" },
       { url: "https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=1400&q=80", alt: "Salon de réception" },
+    ],
+    verticalMedias: [
+      { url: "https://cdn.coverr.co/videos/coverr-garden-restaurant-terrace-3344/1080p.mp4", thumbnailUrl: "https://images.unsplash.com/photo-1424847651672-bf20a4b0982b?auto=format&fit=crop&w=400&q=80", title: "Le jardin d'Epicure" },
+      { url: "https://cdn.coverr.co/videos/coverr-seasonal-produce-kitchen-5566/1080p.mp4", thumbnailUrl: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80", title: "Les beaux produits de saison" },
     ],
   },
   {
@@ -232,6 +313,10 @@ const restaurants: readonly RestaurantSeed[] = [
       { url: "https://images.unsplash.com/photo-1559847844-5315695dadae?auto=format&fit=crop&w=1400&q=80", alt: "Assiette franco-japonaise" },
       { url: "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=1400&q=80", alt: "Dressage contemporain" },
     ],
+    verticalMedias: [
+      { url: "https://cdn.coverr.co/videos/coverr-japanese-french-fusion-plating-7788/1080p.mp4", thumbnailUrl: "https://images.unsplash.com/photo-1495214783159-3503fd1b572d?auto=format&fit=crop&w=400&q=80", title: "La fusion franco-japonaise" },
+      { url: "https://cdn.coverr.co/videos/coverr-minimalist-food-presentation-9900/1080p.mp4", thumbnailUrl: "https://images.unsplash.com/photo-1559847844-5315695dadae?auto=format&fit=crop&w=400&q=80", title: "Le minimalisme dans l'assiette" },
+    ],
   },
   {
     name: "Septime",
@@ -248,6 +333,10 @@ const restaurants: readonly RestaurantSeed[] = [
       { url: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=1400&q=80", alt: "Salle de Septime" },
       { url: "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=1400&q=80", alt: "Assiette végétale" },
       { url: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1400&q=80", alt: "Ambiance bistrot moderne" },
+    ],
+    verticalMedias: [
+      { url: "https://cdn.coverr.co/videos/coverr-market-fresh-vegetables-1212/1080p.mp4", thumbnailUrl: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=400&q=80", title: "Du marché à l'assiette" },
+      { url: "https://cdn.coverr.co/videos/coverr-natural-wine-pouring-3434/1080p.mp4", thumbnailUrl: "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=400&q=80", title: "Les vins naturels de Septime" },
     ],
   },
   {
@@ -266,6 +355,10 @@ const restaurants: readonly RestaurantSeed[] = [
       { url: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1400&q=80", alt: "Table élégante" },
       { url: "https://images.unsplash.com/photo-1544148103-0773bf10d330?auto=format&fit=crop&w=1400&q=80", alt: "Salle intimiste" },
     ],
+    verticalMedias: [
+      { url: "https://cdn.coverr.co/videos/coverr-japanese-art-plating-5656/1080p.mp4", thumbnailUrl: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80", title: "L'assiette comme tableau" },
+      { url: "https://cdn.coverr.co/videos/coverr-intimate-restaurant-candles-7878/1080p.mp4", thumbnailUrl: "https://images.unsplash.com/photo-1544148103-0773bf10d330?auto=format&fit=crop&w=400&q=80", title: "Une nuit intimiste" },
+    ],
   },
   {
     name: "Sushi B",
@@ -282,6 +375,10 @@ const restaurants: readonly RestaurantSeed[] = [
       { url: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=1400&q=80", alt: "Comptoir omakase" },
       { url: "https://images.unsplash.com/photo-1519624014191-508652cbdc94?auto=format&fit=crop&w=1400&q=80", alt: "Sushi raffiné" },
       { url: "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=1400&q=80", alt: "Préparation japonaise" },
+    ],
+    verticalMedias: [
+      { url: "https://cdn.coverr.co/videos/coverr-sushi-chef-omakase-9090/1080p.mp4", thumbnailUrl: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=400&q=80", title: "L'omakase en live" },
+      { url: "https://cdn.coverr.co/videos/coverr-fresh-fish-slicing-japanese-1234/1080p.mp4", thumbnailUrl: "https://images.unsplash.com/photo-1519624014191-508652cbdc94?auto=format&fit=crop&w=400&q=80", title: "La découpe du poisson" },
     ],
   },
   {
@@ -300,6 +397,10 @@ const restaurants: readonly RestaurantSeed[] = [
       { url: "https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=1400&q=80", alt: "Dim sum" },
       { url: "https://images.unsplash.com/photo-1533777857889-4be7c70b33f7?auto=format&fit=crop&w=1400&q=80", alt: "Service haut de gamme" },
     ],
+    verticalMedias: [
+      { url: "https://cdn.coverr.co/videos/coverr-dim-sum-bamboo-steamer-5678/1080p.mp4", thumbnailUrl: "https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=400&q=80", title: "Les dim sum en direct" },
+      { url: "https://cdn.coverr.co/videos/coverr-peking-duck-carving-9012/1080p.mp4", thumbnailUrl: "https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?auto=format&fit=crop&w=400&q=80", title: "Le canard laqué" },
+    ],
   },
   {
     name: "Sola",
@@ -316,6 +417,10 @@ const restaurants: readonly RestaurantSeed[] = [
       { url: "https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?auto=format&fit=crop&w=1400&q=80", alt: "Salle intime de Sola" },
       { url: "https://images.unsplash.com/photo-1554098781-0289065f0c0a?auto=format&fit=crop&w=1400&q=80", alt: "Cuisine fusion" },
       { url: "https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=1400&q=80", alt: "Assiette raffinée" },
+    ],
+    verticalMedias: [
+      { url: "https://cdn.coverr.co/videos/coverr-underground-cave-restaurant-3456/1080p.mp4", thumbnailUrl: "https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?auto=format&fit=crop&w=400&q=80", title: "La cave voûtée de Sola" },
+      { url: "https://cdn.coverr.co/videos/coverr-franco-japanese-plating-7890/1080p.mp4", thumbnailUrl: "https://images.unsplash.com/photo-1554098781-0289065f0c0a?auto=format&fit=crop&w=400&q=80", title: "Fusion en gestes" },
     ],
   },
   {
@@ -334,6 +439,10 @@ const restaurants: readonly RestaurantSeed[] = [
       { url: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1400&q=80", alt: "Assiette de poisson" },
       { url: "https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=1400&q=80", alt: "Atmosphère chaleureuse" },
     ],
+    verticalMedias: [
+      { url: "https://cdn.coverr.co/videos/coverr-ile-saint-louis-paris-2345/1080p.mp4", thumbnailUrl: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=400&q=80", title: "L'île Saint-Louis vue du restaurant" },
+      { url: "https://cdn.coverr.co/videos/coverr-seafood-plating-chef-6789/1080p.mp4", thumbnailUrl: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80", title: "Les produits de la mer" },
+    ],
   },
   {
     name: "Alliance",
@@ -350,6 +459,10 @@ const restaurants: readonly RestaurantSeed[] = [
       { url: "https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?auto=format&fit=crop&w=1400&q=80", alt: "Salle claire d'Alliance" },
       { url: "https://images.unsplash.com/photo-1504754524776-8f4f37790ca0?auto=format&fit=crop&w=1400&q=80", alt: "Assiette signature" },
       { url: "https://images.unsplash.com/photo-1481833761820-0509d3217039?auto=format&fit=crop&w=1400&q=80", alt: "Menu dégustation" },
+    ],
+    verticalMedias: [
+      { url: "https://cdn.coverr.co/videos/coverr-sommelier-wine-pairing-1122/1080p.mp4", thumbnailUrl: "https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?auto=format&fit=crop&w=400&q=80", title: "L'accord parfait mets-vins" },
+      { url: "https://cdn.coverr.co/videos/coverr-tasting-menu-reveal-3344/1080p.mp4", thumbnailUrl: "https://images.unsplash.com/photo-1504754524776-8f4f37790ca0?auto=format&fit=crop&w=400&q=80", title: "Le menu dégustation" },
     ],
   },
   {
@@ -368,6 +481,10 @@ const restaurants: readonly RestaurantSeed[] = [
       { url: "https://images.unsplash.com/photo-1498654896293-37aacf113fd9?auto=format&fit=crop&w=1400&q=80", alt: "Ambiance contemporaine" },
       { url: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=1400&q=80", alt: "Dîner gastronomique" },
     ],
+    verticalMedias: [
+      { url: "https://cdn.coverr.co/videos/coverr-stone-mineral-textures-food-5566/1080p.mp4", thumbnailUrl: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80", title: "L'esprit minéral de Granite" },
+      { url: "https://cdn.coverr.co/videos/coverr-open-kitchen-restaurant-7788/1080p.mp4", thumbnailUrl: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=400&q=80", title: "La cuisine ouverte" },
+    ],
   },
   {
     name: "Virtus",
@@ -384,6 +501,10 @@ const restaurants: readonly RestaurantSeed[] = [
       { url: "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=1400&q=80", alt: "Cuisine contemporaine" },
       { url: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1400&q=80", alt: "Salle intimiste" },
       { url: "https://images.unsplash.com/photo-1481833761820-0509d3217039?auto=format&fit=crop&w=1400&q=80", alt: "Menu dégustation" },
+    ],
+    verticalMedias: [
+      { url: "https://cdn.coverr.co/videos/coverr-precise-cooking-techniques-9900/1080p.mp4", thumbnailUrl: "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=400&q=80", title: "La précision en cuisine" },
+      { url: "https://cdn.coverr.co/videos/coverr-aligre-market-paris-morning-2121/1080p.mp4", thumbnailUrl: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=400&q=80", title: "Au marché d'Aligre" },
     ],
   },
   {
@@ -402,6 +523,10 @@ const restaurants: readonly RestaurantSeed[] = [
       { url: "https://images.unsplash.com/photo-1424847651672-bf20a4b0982b?auto=format&fit=crop&w=1400&q=80", alt: "Cuisine créative" },
       { url: "https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&w=1400&q=80", alt: "Ambiance conviviale" },
     ],
+    verticalMedias: [
+      { url: "https://cdn.coverr.co/videos/coverr-lively-bistro-paris-evening-4343/1080p.mp4", thumbnailUrl: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=400&q=80", title: "L'énergie du Chateaubriand" },
+      { url: "https://cdn.coverr.co/videos/coverr-creative-natural-cooking-6565/1080p.mp4", thumbnailUrl: "https://images.unsplash.com/photo-1424847651672-bf20a4b0982b?auto=format&fit=crop&w=400&q=80", title: "La cuisine instinctive d'Inaki" },
+    ],
   },
   {
     name: "Benoit",
@@ -418,6 +543,10 @@ const restaurants: readonly RestaurantSeed[] = [
       { url: "https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=1400&q=80", alt: "Bistrot gastronomique" },
       { url: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1400&q=80", alt: "Salle conviviale" },
       { url: "https://images.unsplash.com/photo-1504754524776-8f4f37790ca0?auto=format&fit=crop&w=1400&q=80", alt: "Cuisine traditionnelle" },
+    ],
+    verticalMedias: [
+      { url: "https://cdn.coverr.co/videos/coverr-classic-french-bistro-ambiance-8787/1080p.mp4", thumbnailUrl: "https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=400&q=80", title: "L'âme du bistrot parisien" },
+      { url: "https://cdn.coverr.co/videos/coverr-boeuf-bourguignon-cooking-1010/1080p.mp4", thumbnailUrl: "https://images.unsplash.com/photo-1504754524776-8f4f37790ca0?auto=format&fit=crop&w=400&q=80", title: "Les grands classiques mijotés" },
     ],
   },
   {
@@ -436,6 +565,10 @@ const restaurants: readonly RestaurantSeed[] = [
       { url: "https://images.unsplash.com/photo-1516870873732-2d24d1aa5f17?auto=format&fit=crop&w=1400&q=80", alt: "Sushi de haute précision" },
       { url: "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=1400&q=80", alt: "Préparation omakase" },
     ],
+    verticalMedias: [
+      { url: "https://cdn.coverr.co/videos/coverr-sushi-counter-precision-2323/1080p.mp4", thumbnailUrl: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=400&q=80", title: "Le comptoir de L'Abysse" },
+      { url: "https://cdn.coverr.co/videos/coverr-nigiri-tuna-preparation-4545/1080p.mp4", thumbnailUrl: "https://images.unsplash.com/photo-1516870873732-2d24d1aa5f17?auto=format&fit=crop&w=400&q=80", title: "La précision du geste" },
+    ],
   },
   {
     name: "David Toutain",
@@ -453,6 +586,10 @@ const restaurants: readonly RestaurantSeed[] = [
       { url: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1400&q=80", alt: "Salle contemporaine" },
       { url: "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=1400&q=80", alt: "Dressage pointu" },
     ],
+    verticalMedias: [
+      { url: "https://cdn.coverr.co/videos/coverr-vegetable-garden-chef-harvest-6767/1080p.mp4", thumbnailUrl: "https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=400&q=80", title: "Le végétal sublimé" },
+      { url: "https://cdn.coverr.co/videos/coverr-ocean-seafood-chef-inspiration-8989/1080p.mp4", thumbnailUrl: "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=400&q=80", title: "L'océan dans l'assiette" },
+    ],
   },
   {
     name: "Le Cinq",
@@ -469,6 +606,10 @@ const restaurants: readonly RestaurantSeed[] = [
       { url: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1400&q=80", alt: "Salle de palace" },
       { url: "https://images.unsplash.com/photo-1481833761820-0509d3217039?auto=format&fit=crop&w=1400&q=80", alt: "Assiette de palace" },
       { url: "https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=1400&q=80", alt: "Salon raffiné" },
+    ],
+    verticalMedias: [
+      { url: "https://cdn.coverr.co/videos/coverr-palace-hotel-grand-dining-room-1313/1080p.mp4", thumbnailUrl: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=400&q=80", title: "La majesté du Cinq" },
+      { url: "https://cdn.coverr.co/videos/coverr-luxury-tableside-service-3535/1080p.mp4", thumbnailUrl: "https://images.unsplash.com/photo-1481833761820-0509d3217039?auto=format&fit=crop&w=400&q=80", title: "Le service de palace" },
     ],
   },
 ] as const;
@@ -545,7 +686,7 @@ async function upsertReferenceTables(tx: SeedTransaction) {
   ]);
 }
 
-async function seedRestaurant(tx: SeedTransaction, item: RestaurantSeed, referenceIds: ReferenceIds) {
+async function seedRestaurant(tx: SeedTransaction, item: RestaurantSeed, referenceIds: ReferenceIds, restaurantIndex: number) {
   const address = await upsertAddress(tx, item.address);
   const existing = await tx.restaurant.findFirst({ where: { name: item.name } });
 
@@ -582,6 +723,18 @@ async function seedRestaurant(tx: SeedTransaction, item: RestaurantSeed, referen
   if (item.images.length > 0) {
     await tx.image.createMany({
       data: item.images.map((image) => ({ url: image.url, alt: image.alt, source: "michelin-seed", restaurantId: restaurant.id })),
+    });
+  }
+
+  await tx.verticalMedia.deleteMany({ where: { restaurantId: restaurant.id } });
+  const verticalMedias = buildRestaurantVerticalMedias(item.name, restaurantIndex);
+  if (verticalMedias.length > 0) {
+    await tx.verticalMedia.createMany({
+      data: verticalMedias.map((media) => ({
+        url: media.url,
+        description: media.description ?? media.title ?? null,
+        restaurantId: restaurant.id,
+      })),
     });
   }
 
@@ -685,7 +838,7 @@ async function main(): Promise<void> {
       await upsertReferenceTables(tx);
 
       const referenceIds = await loadReferenceIds(tx);
-      const seededRestaurants = await Promise.all(restaurants.map((restaurant) => seedRestaurant(tx, restaurant, referenceIds)));
+      const seededRestaurants = await Promise.all(restaurants.map((restaurant, index) => seedRestaurant(tx, restaurant, referenceIds, index)));
       const seededHotels = await Promise.all(hotels.map((hotel) => seedHotel(tx, hotel, referenceIds)));
 
       const bestRestaurantDistinctions = seededRestaurants

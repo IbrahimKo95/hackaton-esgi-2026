@@ -2,7 +2,11 @@ import { prisma } from "@/lib/server/prisma";
 import { HttpError } from "@/lib/server/http";
 import type { Prisma } from "@/app/generated/prisma/client";
 import type { ReservationCreateInput } from "@/lib/server/schemas/reservations";
-import { getRankFromReservationCount } from "@/lib/server/rank/service";
+import {
+  getRankDefinition,
+  getRankFromReservationCount,
+  getRankProgress,
+} from "@/lib/server/rank/service";
 
 function getUtcDayBounds(date: Date): { start: Date; end: Date } {
   const start = new Date(
@@ -98,11 +102,16 @@ export async function createReservationForRestaurant(
       },
     });
 
+    const rankProgress = getRankProgress(rankedUser.reservationCount);
+
     return {
       ...reservation,
       userProgress: {
         reservationCount: rankedUser.reservationCount,
         rank: rankedUser.rank,
+        currentBenefit: getRankDefinition(rankedUser.rank).benefitLabel,
+        nextRank: rankProgress.nextDefinition?.rank ?? null,
+        reservationsToNextRank: rankProgress.reservationsToNextRank,
       },
     };
   });

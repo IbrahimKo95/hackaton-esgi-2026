@@ -23,7 +23,7 @@ const defaultItems: MenuItem[] = [
   { label: "Restaurants", href: "/restaurant" },
   { label: "Hotels", href: "/hotel" },
   { label: "Bon plan MICHELIN", href: "#" },
-  { label: "Mon programme de fidelite", href: "#" },
+  { label: "Mon programme de fidelite", href: "/fidelite" },
   { label: "Nous contacter", href: "#" },
   { label: "Preferences", href: "#" },
 ];
@@ -118,7 +118,7 @@ export default function NavbarMenu({
               ))}
             </nav>
 
-            <p className="mt-16 text-[30px] text-black/70">
+            <p className="mt-10 text-[18px] text-black/70 sm:mt-16 sm:text-[30px]">
               {language} | {currency}
             </p>
           </div>

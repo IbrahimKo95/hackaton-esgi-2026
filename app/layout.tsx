@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Figtree, Geist_Mono } from "next/font/google";
 import ChatbotFab from "@/components/chatbot-fab";
 import "./globals.css";
+import Providers from "@/app/providers";
 
 const figtree = Figtree({
   variable: "--font-figtree",
@@ -25,8 +26,10 @@ export default function RootLayout({
       className={`${figtree.variable} h-full antialiased`}
     >
       <body className={`${figtree.className} min-h-full flex flex-col`}>
+      <Providers>
         {children}
         <ChatbotFab />
+      </Providers>
       </body>
     </html>
   );
