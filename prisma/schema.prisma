@@ -133,6 +133,7 @@ model Restaurant {
   reservations  Reservation[]
   tags          RestaurantTag[]
   VerticalMedia VerticalMedia[]
+  images        Image[]
 
   promotions Promotion[]
 }
@@ -226,6 +227,7 @@ model Hotel {
   distinctions      Distinction[]
   rooms             HotelRoom[]
   hotelReservations HotelReservation[]
+  images            Image[]
 }
 
 model Room {
@@ -239,6 +241,7 @@ model Room {
 
   hotels            HotelRoom[]
   hotelReservations HotelReservation[]
+  images     Image[]
 }
 
 model HotelRoom {
@@ -310,4 +313,24 @@ model UserPromotion {
   promotion   Promotion @relation(fields: [promotionId], references: [id])
 
   @@unique([userId, promotionId])
+}
+model Image {
+  id        Int      @id @default(autoincrement())
+  url       String
+  alt       String?
+  source    String?
+  createdAt DateTime @default(now())
+
+  restaurantId Int?
+  restaurant   Restaurant? @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+
+  hotelId Int?
+  hotel   Hotel? @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+
+  roomId Int?
+  room   Room? @relation(fields: [roomId], references: [id], onDelete: Cascade)
+
+  @@index([restaurantId])
+  @@index([hotelId])
+  @@index([roomId])
 }
