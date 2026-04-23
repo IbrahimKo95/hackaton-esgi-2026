@@ -18,7 +18,7 @@ jobs:
           key:      ${{ secrets.AZURE_SSH_KEY }}
           port:     ${{ secrets.AZURE_PORT }}
           script: |
-            cd /opt/michelin
+            cd ~/hackaton-esgi-2026
 
             echo "📥 Pull des dernières modifications..."
             git pull origin develop
@@ -28,7 +28,8 @@ jobs:
             POSTGRES_USER=${{ secrets.POSTGRES_USER }}
             POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
             POSTGRES_DB=${{ secrets.POSTGRES_DB }}
-            DATABASE_URL_DOCKER=${{ secrets.DB_URL }}
+            DATABASE_URL=${{ secrets.DB_URL}}
+            DATABASE_URL_DOCKER=${{ secrets.DB_DOCKER_URL }}
             EOF
 
             echo "🐳 Rebuild et redémarrage..."
