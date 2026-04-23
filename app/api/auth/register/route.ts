@@ -1,7 +1,6 @@
 import { hash } from "bcryptjs";
 
 import { Prisma } from "@/app/generated/prisma/client";
-import { talkToAgent } from "@/lib/server/agent";
 import { HttpError, handleRouteError, json, parseJsonWithSchema } from "@/lib/server/http";
 import { prisma } from "@/lib/server/prisma";
 import { registerSchema } from "@/lib/server/schemas/auth";
