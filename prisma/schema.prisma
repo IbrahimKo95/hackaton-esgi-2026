@@ -47,18 +47,18 @@ model VerificationToken {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  firstName     String?
-  lastName      String?
-  email         String?   @unique
-  emailVerified DateTime?
-  password      String?
-  image         String?
-  phone         String?
-  subscribed    Boolean   @default(false)
-  reservationCount Int    @default(0)
-  rank          UserRank  @default(BASIC)
-  createdAt     DateTime  @default(now())
+  id               String    @id @default(cuid())
+  firstName        String?
+  lastName         String?
+  email            String?   @unique
+  emailVerified    DateTime?
+  password         String?
+  image            String?
+  phone            String?
+  subscribed       Boolean   @default(false)
+  reservationCount Int       @default(0)
+  rank             UserRank  @default(BASIC)
+  createdAt        DateTime  @default(now())
 
   roleId Int?
   role   Role? @relation(fields: [roleId], references: [id])
@@ -116,11 +116,9 @@ model Restaurant {
   link        String?
   menu        String?
   priceRange  Int
-  cuisineType String
   schedule    String?
   seatingCap  Int?
   imageUrl    String?
-  ambiance    String?
   createdAt   DateTime @default(now())
 
   addressId Int
@@ -132,10 +130,56 @@ model Restaurant {
   distinctions  Distinction[]
   reservations  Reservation[]
   tags          RestaurantTag[]
+  ambiances     RestaurantAmbiance[]
+  typesCuisine  RestaurantTypeCuisine[]
   VerticalMedia VerticalMedia[]
   images        Image[]
 
   promotions Promotion[]
+}
+
+model AmbianceRestaurant {
+  id       Int    @id @default(autoincrement())
+  code     String @unique
+  libelle  String
+
+  restaurants RestaurantAmbiance[]
+}
+
+model AmbianceHotel {
+  id      Int    @id @default(autoincrement())
+  code    String @unique
+  libelle String
+
+  hotels HotelAmbiance[]
+}
+
+model TypeCuisine {
+  id       Int    @id @default(autoincrement())
+  code     String @unique
+  libelle  String
+
+  restaurants RestaurantTypeCuisine[]
+}
+
+model RestaurantAmbiance {
+  restaurantId Int
+  ambianceRestaurantId Int
+
+  restaurant Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  ambianceRestaurant AmbianceRestaurant @relation(fields: [ambianceRestaurantId], references: [id], onDelete: Cascade)
+
+  @@id([restaurantId, ambianceRestaurantId])
+}
+
+model RestaurantTypeCuisine {
+  restaurantId Int
+  typeCuisineId Int
+
+  restaurant Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  typeCuisine TypeCuisine @relation(fields: [typeCuisineId], references: [id], onDelete: Cascade)
+
+  @@id([restaurantId, typeCuisineId])
 }
 
 model Distinction {
@@ -215,19 +259,30 @@ model Reservation {
 }
 
 model Hotel {
-  id         Int     @id @default(autoincrement())
+  id         Int      @id @default(autoincrement())
   name       String
   imageUrl   String?
-  starRating Int     @default(0)
-  createdAt   DateTime @default(now())
+  starRating Int      @default(0)
+  createdAt  DateTime @default(now())
 
   addressId Int
   address   Address @relation(fields: [addressId], references: [id])
 
   distinctions      Distinction[]
   rooms             HotelRoom[]
+  ambiances         HotelAmbiance[]
   hotelReservations HotelReservation[]
   images            Image[]
+}
+
+model HotelAmbiance {
+  hotelId Int
+  ambianceHotelId Int
+
+  hotel Hotel @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+  ambianceHotel AmbianceHotel @relation(fields: [ambianceHotelId], references: [id], onDelete: Cascade)
+
+  @@id([hotelId, ambianceHotelId])
 }
 
 model Room {
@@ -241,7 +296,7 @@ model Room {
 
   hotels            HotelRoom[]
   hotelReservations HotelReservation[]
-  images     Image[]
+  images            Image[]
 }
 
 model HotelRoom {
@@ -314,6 +369,7 @@ model UserPromotion {
 
   @@unique([userId, promotionId])
 }
+
 model Image {
   id        Int      @id @default(autoincrement())
   url       String

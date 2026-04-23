@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/server/prisma";
 import { HttpError } from "@/lib/server/http";
+import { DistinctionType } from "@/app/generated/prisma/enums";
 import type {
   DistinctionPatchInput,
   RestaurantCreateInput,
@@ -11,6 +12,16 @@ export async function listRestaurants() {
     include: {
       address: true,
       distinctions: true,
+      ambiances: {
+        include: {
+          ambianceRestaurant: true,
+        },
+      },
+      typesCuisine: {
+        include: {
+          typeCuisine: true,
+        },
+      },
     },
     orderBy: {
       createdAt: "desc",
@@ -24,6 +35,16 @@ export async function getRestaurantById(id: number) {
     include: {
       address: true,
       distinctions: true,
+      ambiances: {
+        include: {
+          ambianceRestaurant: true,
+        },
+      },
+      typesCuisine: {
+        include: {
+          typeCuisine: true,
+        },
+      },
     },
   });
 
@@ -46,17 +67,35 @@ export async function createRestaurant(input: RestaurantCreateInput) {
         link: input.link,
         menu: input.menu,
         priceRange: input.priceRange,
-        cuisineType: input.cuisineType,
         schedule: input.schedule,
         seatingCap: input.seatingCap,
         imageUrl: input.imageUrl,
-        ambiance: input.ambiance,
         chefId: input.chefId,
         addressId: address.id,
+        ambiances: input.ambiances
+          ? {
+              create: input.ambiances.map((ambianceRestaurantId) => ({ ambianceRestaurantId })),
+            }
+          : undefined,
+        typesCuisine: input.typesCuisine
+          ? {
+              create: input.typesCuisine.map((typeCuisineId) => ({ typeCuisineId })),
+            }
+          : undefined,
       },
       include: {
         address: true,
         distinctions: true,
+        ambiances: {
+          include: {
+            ambianceRestaurant: true,
+          },
+        },
+        typesCuisine: {
+          include: {
+            typeCuisine: true,
+          },
+        },
       },
     });
   });
@@ -80,8 +119,43 @@ export async function updateRestaurant(id: number, patch: RestaurantPatchInput) 
       });
     }
 
-    const { address: ignoredAddress, ...restaurantData } = patch;
+    const {
+      address: ignoredAddress,
+      ambiances,
+      typesCuisine,
+      ...restaurantData
+    } = patch;
     void ignoredAddress;
+
+    if (ambiances) {
+      await tx.restaurantAmbiance.deleteMany({
+        where: { restaurantId: id },
+      });
+
+      if (ambiances.length > 0) {
+        await tx.restaurantAmbiance.createMany({
+          data: ambiances.map((ambianceRestaurantId) => ({
+            restaurantId: id,
+            ambianceRestaurantId,
+          })),
+        });
+      }
+    }
+
+    if (typesCuisine) {
+      await tx.restaurantTypeCuisine.deleteMany({
+        where: { restaurantId: id },
+      });
+
+      if (typesCuisine.length > 0) {
+        await tx.restaurantTypeCuisine.createMany({
+          data: typesCuisine.map((typeCuisineId) => ({
+            restaurantId: id,
+            typeCuisineId,
+          })),
+        });
+      }
+    }
 
     return tx.restaurant.update({
       where: { id },
@@ -89,12 +163,24 @@ export async function updateRestaurant(id: number, patch: RestaurantPatchInput) 
       include: {
         address: true,
         distinctions: true,
+        ambiances: {
+          include: {
+            ambianceRestaurant: true,
+          },
+        },
+        typesCuisine: {
+          include: {
+            typeCuisine: true,
+          },
+        },
       },
     });
   });
 }
 
 export async function upsertDistinction(restaurantId: number, input: DistinctionPatchInput) {
+  const type = input.type as (typeof DistinctionType)[keyof typeof DistinctionType];
+
   const restaurant = await prisma.restaurant.findUnique({
     where: { id: restaurantId },
     select: { id: true },
@@ -117,7 +203,7 @@ export async function upsertDistinction(restaurantId: number, input: Distinction
   if (current) {
     return prisma.distinction.update({
       where: { id: current.id },
-      data: { type: input.type },
+      data: { type },
     });
   }
 
@@ -125,7 +211,7 @@ export async function upsertDistinction(restaurantId: number, input: Distinction
     data: {
       restaurantId,
       year: input.year,
-      type: input.type,
+      type,
     },
   });
 }
