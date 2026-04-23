@@ -13,10 +13,14 @@ type NavbarMenuProps = {
   language?: string;
   currency?: string;
   triggerClassName?: string;
+  user?: {
+    name?: string | null;
+    email?: string | null;
+  } | null;
 };
 
 const defaultItems: MenuItem[] = [
-  { label: "Restaurants", href: "#" },
+  { label: "Restaurants", href: "/restaurant" },
   { label: "Hotels", href: "/hotel" },
   { label: "Bon plan MICHELIN", href: "#" },
   { label: "Mon programme de fidelite", href: "#" },
@@ -29,6 +33,7 @@ export default function NavbarMenu({
   language = "FR",
   currency = "EUR",
   triggerClassName = "",
+  user = null,
 }: NavbarMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -77,21 +82,30 @@ export default function NavbarMenu({
           />
           <div className="relative h-[75vh] w-full overflow-auto rounded-b-[28px] bg-white px-7 pb-8 pt-6 sm:h-full sm:w-[420px] sm:min-w-[280px] sm:rounded-none">
             <div className="mb-10 flex items-center justify-between">
-              <span className="text-[30px] text-[#c1282d]">✽</span>
-              <button
-                aria-label="Fermer le menu"
-                className="rounded-full p-2 transition hover:bg-black/5"
-                onClick={() => setIsOpen(false)}
-                type="button"
-              >
-                <svg viewBox="0 0 24 24" className="h-8 w-8" fill="none" stroke="currentColor" strokeWidth="1.8">
-                  <path d="M18 6L6 18" strokeLinecap="round" />
-                  <path d="M6 6l12 12" strokeLinecap="round" />
-                </svg>
-              </button>
+              <img src="/star.svg" alt="Logo" className="h-10 w-auto"/>
+              {/*<span className="text-[30px] text-[#c1282d]">✽</span>*/}
+                <button
+                  aria-label="Fermer le menu"
+                  className="rounded-full p-2 transition hover:bg-black/5"
+                  onClick={() => setIsOpen(false)}
+                  type="button"
+                >
+                  <svg viewBox="0 0 24 24" className="h-8 w-8" fill="none" stroke="currentColor" strokeWidth="1.8">
+                    <path d="M18 6L6 18" strokeLinecap="round" />
+                    <path d="M6 6l12 12" strokeLinecap="round" />
+                  </svg>
+                </button>
             </div>
 
-            <nav className="flex flex-col gap-4 text-[28px] font-semibold leading-[1.12] tracking-[-0.02em] sm:gap-5 sm:text-[40px] sm:leading-[1.04]">
+            {user ? (
+              <div className="mb-8 rounded-[22px] bg-black/5 px-4 py-3">
+                <p className="text-[12px] uppercase tracking-[0.14em] text-black/50">Connecté</p>
+                <p className="mt-1 text-[18px] font-semibold leading-tight text-black">{user.name ?? "Utilisateur"}</p>
+                {user.email ? <p className="mt-0.5 text-[14px] text-black/65">{user.email}</p> : null}
+              </div>
+            ) : null}
+
+            <nav className="flex flex-col gap-4 text-2xl font-semibold tracking-[-0.02em] sm:text-4xl sm:gap-5">
               {items.map((item) => (
                 <Link
                   key={item.label}

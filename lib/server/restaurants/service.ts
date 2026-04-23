@@ -11,6 +11,7 @@ export async function listRestaurants() {
   return prisma.restaurant.findMany({
     include: {
       address: true,
+      images: true,
       distinctions: true,
       ambiances: {
         include: {
@@ -34,6 +35,7 @@ export async function getRestaurantById(id: number) {
     where: { id },
     include: {
       address: true,
+      images: true,
       distinctions: true,
       ambiances: {
         include: {
@@ -85,6 +87,7 @@ export async function createRestaurant(input: RestaurantCreateInput) {
       },
       include: {
         address: true,
+        images: true,
         distinctions: true,
         ambiances: {
           include: {
@@ -162,6 +165,7 @@ export async function updateRestaurant(id: number, patch: RestaurantPatchInput) 
       data: restaurantData,
       include: {
         address: true,
+        images: true,
         distinctions: true,
         ambiances: {
           include: {

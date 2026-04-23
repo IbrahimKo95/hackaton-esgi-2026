@@ -1,26 +1,27 @@
 import NavbarMenu from "@/components/navbar-menu";
-import HotelCard from "@/components/hotel-card";
+import RestaurantCard from "@/components/restaurant-card";
+import RestaurantSearchBar from "@/components/restaurant-search-bar";
 import { getAuthSession } from "@/lib/server/auth";
-import { listHotels } from "@/lib/server/hotel/service";
+import { searchRestaurants } from "@/lib/server/restaurants/search";
 import { Figtree } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
 
 const figtree = Figtree({ subsets: ["latin"] });
 
-type HotelPageProps = {
+type RestaurantPageProps = {
     searchParams?: { q?: string } | Promise<{ q?: string }>;
 };
 
 const FALLBACK_HERO_IMAGE =
-    "https://images.unsplash.com/photo-1445019980597-93fa8acb246c?auto=format&fit=crop&w=1200&q=80";
+    "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1200&q=80";
 const FALLBACK_CARD_IMAGE =
-    "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=900&q=80";
+    "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&q=80";
 
-export default async function HotelPage({ searchParams }: HotelPageProps) {
+export default async function RestaurantPage({ searchParams }: RestaurantPageProps) {
     const { q } = await Promise.resolve(searchParams ?? {});
     const session = await getAuthSession();
-    const hotels = await listHotels(q);
+    const filteredRestaurants = await searchRestaurants(q, "normal");
 
     return (
         <main className={`${figtree.className} min-h-screen bg-gradient-to-b from-[#f4f4f4] to-white text-[#141414]`}>
@@ -28,7 +29,7 @@ export default async function HotelPage({ searchParams }: HotelPageProps) {
                 <header className="relative h-[235px] overflow-hidden">
                     <Image
                         src={FALLBACK_HERO_IMAGE}
-                        alt="Façade d'hôtel"
+                        alt="Façade de restaurant"
                         fill
                         priority
                         className="object-cover"
@@ -45,54 +46,44 @@ export default async function HotelPage({ searchParams }: HotelPageProps) {
                     </div>
 
                     <div className="absolute left-0 top-[70px] w-full px-5 text-white">
-                        <h1 className="mb-3 text-[38px] font-semibold leading-none">Hôtels</h1>
-                        <form
-                            action="/hotel"
-                            className="flex h-[45px] items-center gap-2 rounded-full border border-white/45 bg-black/20 px-4 backdrop-blur-sm"
-                        >
-                            <svg viewBox="0 0 24 24" className="h-5 w-5 shrink-0" fill="none" stroke="currentColor" strokeWidth="2">
-                                <circle cx="11" cy="11" r="7" />
-                                <path d="M20 20l-3.5-3.5" strokeLinecap="round" />
-                            </svg>
-                            <input
-                                name="q"
-                                defaultValue={q ?? ""}
-                                placeholder="Rechercher un hôtel, une ville..."
-                                className="w-full bg-transparent text-[14px] text-white placeholder:text-white/85 focus:outline-none"
-                                aria-label="Rechercher un hôtel"
-                            />
-                        </form>
+                        <h1 className="mb-3 text-[38px] font-semibold leading-none">Restaurants</h1>
+                        <RestaurantSearchBar
+                            key={q ?? ""}
+                            initialQuery={q ?? ""}
+                        />
                     </div>
                 </header>
 
                 <div className="flex-1 bg-[#f5f5f5] px-5 pb-8 pt-7 lg:px-7">
-                    {hotels.length > 0 ? (
+                    {filteredRestaurants.length > 0 ? (
                         <div className="space-y-4 md:grid md:grid-cols-2 md:gap-5 md:space-y-0 xl:grid-cols-3">
-                            {hotels.map((hotel) => {
-                                const image = hotel.imageUrl ?? hotel.images?.[0]?.url ?? FALLBACK_CARD_IMAGE;
-                                const roomCount = hotel._count.rooms;
-                                const address = `${hotel.address.street}, ${hotel.address.city}, ${hotel.address.country}`;
+                            {filteredRestaurants.map((restaurant) => {
+                                const image = restaurant.imageUrl ?? restaurant.images?.[0]?.url ?? FALLBACK_CARD_IMAGE;
+                                const address = `${restaurant.address.street}, ${restaurant.address.city}, ${restaurant.address.country}`;
+                                const ambiances = restaurant.ambiances.map((item) => item.ambianceRestaurant.libelle);
+                                const cuisines = restaurant.typesCuisine.map((item) => item.typeCuisine.libelle);
+                                const distinctions = restaurant.distinctions;
 
                                 return (
-                                    <HotelCard
-                                        key={hotel.id}
-                                        id={hotel.id}
-                                        name={hotel.name}
+                                    <RestaurantCard
+                                        key={restaurant.id}
+                                        id={restaurant.id}
+                                        name={restaurant.name}
                                         imageUrl={image}
                                         address={address}
-                                        roomCount={roomCount}
-                                        starRating={hotel.starRating}
+                                        ambiances={ambiances}
+                                        cuisines={cuisines}
+                                        distinctions={distinctions}
                                     />
                                 );
                             })}
                         </div>
                     ) : (
                         <div className="rounded-[24px] bg-white p-6 text-center shadow-[0_10px_24px_rgba(0,0,0,0.08)]">
-                            <p className="text-[18px] font-semibold">Aucun hôtel trouvé</p>
+                            <p className="text-[18px] font-semibold">Aucun restaurant trouvé</p>
                             <p className="mt-1 text-[14px] text-black/70">Essaie un autre nom ou une autre ville.</p>
                         </div>
                     )}
-
                 </div>
             </section>
         </main>
