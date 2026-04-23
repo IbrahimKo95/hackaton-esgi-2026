@@ -1,6 +1,5 @@
 import NavbarMenu from "@/components/navbar-menu";
 import HotelCard from "@/components/hotel-card";
-import { getAuthSession } from "@/lib/server/auth";
 import { listHotels } from "@/lib/server/hotel/service";
 import { Figtree } from "next/font/google";
 import Image from "next/image";
@@ -19,7 +18,6 @@ const FALLBACK_CARD_IMAGE =
 
 export default async function HotelPage({ searchParams }: HotelPageProps) {
     const { q } = await Promise.resolve(searchParams ?? {});
-    const session = await getAuthSession();
     const hotels = await listHotels(q);
 
     return (
@@ -41,7 +39,7 @@ export default async function HotelPage({ searchParams }: HotelPageProps) {
                                 <path d="M15 18l-6-6 6-6" strokeLinecap="round" strokeLinejoin="round" />
                             </svg>
                         </Link>
-                        <NavbarMenu triggerClassName="text-white" user={session?.user ?? null} />
+                        <NavbarMenu triggerClassName="text-white" />
                     </div>
 
                     <div className="absolute left-0 top-[70px] w-full px-5 text-white">

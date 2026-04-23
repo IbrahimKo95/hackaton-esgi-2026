@@ -2,7 +2,8 @@ import NavbarMenu from "@/components/navbar-menu";
 import MichelinDistinctionBadge from "@/components/michelin-distinction-badge";
 import { HttpError, toIntId } from "@/lib/server/http";
 import { getRestaurantById } from "@/lib/server/restaurants/service";
-import { getAuthSession } from "@/lib/server/auth";
+import { listFullyBookedDatesForRestaurant } from "@/lib/server/reservations/service";
+import RestaurantReservationPanel from "@/app/components/restaurant/restaurant-reservation-panel";
 import { Figtree } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
@@ -23,7 +24,6 @@ const FALLBACK_GALLERY_IMAGES = [
 
 export default async function RestaurantDetailsPage({ params }: RestaurantDetailsPageProps) {
     const { id } = await Promise.resolve(params);
-    const session = await getAuthSession();
 
     let restaurant: Awaited<ReturnType<typeof getRestaurantById>>;
 
@@ -44,6 +44,7 @@ export default async function RestaurantDetailsPage({ params }: RestaurantDetail
     const ambiances = restaurant.ambiances.map((item) => item.ambianceRestaurant.libelle);
     const cuisines = restaurant.typesCuisine.map((item) => item.typeCuisine.libelle);
     const distinctions = restaurant.distinctions;
+    const fullyBookedDates = await listFullyBookedDatesForRestaurant(restaurant.id);
 
     return (
         <main className={`${figtree.className} min-h-screen bg-gradient-to-b from-[#efefef] to-white text-[#141414]`}>
@@ -64,7 +65,7 @@ export default async function RestaurantDetailsPage({ params }: RestaurantDetail
                                 <path d="M15 18l-6-6 6-6" strokeLinecap="round" strokeLinejoin="round" />
                             </svg>
                         </Link>
-                        <NavbarMenu triggerClassName="text-white" user={session?.user ?? null} />
+                        <NavbarMenu triggerClassName="text-white" />
                     </div>
 
                     <div className="absolute left-0 top-[70px] w-full px-5 text-white">
@@ -149,14 +150,12 @@ export default async function RestaurantDetailsPage({ params }: RestaurantDetail
                         {restaurant.name} vous accueille a {restaurant.address.city} avec {ambiances.length > 0 ? `une ambiance ${ambiances.join(", ")}` : "une expérience soignée"} et {cuisines.length > 0 ? `une cuisine ${cuisines.join(", ")}` : "une carte inspirée"}.
                     </p>
 
-                    <div className="mt-12 flex justify-center pb-6">
-                        <button
-                            className="rounded-full border border-black/60 bg-white px-7 py-2 text-[22px] font-medium leading-none transition hover:bg-black hover:text-white"
-                            type="button"
-                        >
-                            Reserver
-                        </button>
-                    </div>
+                    <RestaurantReservationPanel
+                        restaurantId={restaurant.id}
+                        restaurantName={restaurant.name}
+                        seatingCap={restaurant.seatingCap}
+                        fullyBookedDates={fullyBookedDates}
+                    />
                 </div>
             </section>
         </main>

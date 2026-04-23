@@ -17,6 +17,12 @@ export const createReservationSchema = z.object({
     })
     .int("guestCount must be an integer.")
     .gt(0, "guestCount must be greater than 0."),
+  userId: z.string().trim().optional(),
+  userEmail: z.string().trim().email().toLowerCase().optional(),
 });
 
 export type ReservationCreateInput = z.infer<typeof createReservationSchema>;
+
+export const updateReservationSchema = createReservationSchema;
+
+export type ReservationUpdateInput = z.infer<typeof updateReservationSchema>;

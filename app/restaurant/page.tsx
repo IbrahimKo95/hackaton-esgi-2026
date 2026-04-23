@@ -1,7 +1,6 @@
 import NavbarMenu from "@/components/navbar-menu";
 import RestaurantCard from "@/components/restaurant-card";
 import RestaurantSearchBar from "@/components/restaurant-search-bar";
-import { getAuthSession } from "@/lib/server/auth";
 import { searchRestaurants } from "@/lib/server/restaurants/search";
 import { Figtree } from "next/font/google";
 import Image from "next/image";
@@ -20,7 +19,6 @@ const FALLBACK_CARD_IMAGE =
 
 export default async function RestaurantPage({ searchParams }: RestaurantPageProps) {
     const { q } = await Promise.resolve(searchParams ?? {});
-    const session = await getAuthSession();
     const filteredRestaurants = await searchRestaurants(q, "normal");
 
     return (
@@ -42,7 +40,7 @@ export default async function RestaurantPage({ searchParams }: RestaurantPagePro
                                 <path d="M15 18l-6-6 6-6" strokeLinecap="round" strokeLinejoin="round" />
                             </svg>
                         </Link>
-                        <NavbarMenu triggerClassName="text-white" user={session?.user ?? null} />
+                        <NavbarMenu triggerClassName="text-white" />
                     </div>
 
                     <div className="absolute left-0 top-[70px] w-full px-5 text-white">

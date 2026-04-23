@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 
 type MenuItem = {
@@ -13,10 +14,6 @@ type NavbarMenuProps = {
   language?: string;
   currency?: string;
   triggerClassName?: string;
-  user?: {
-    name?: string | null;
-    email?: string | null;
-  } | null;
 };
 
 const defaultItems: MenuItem[] = [
@@ -33,9 +30,9 @@ export default function NavbarMenu({
   language = "FR",
   currency = "EUR",
   triggerClassName = "",
-  user = null,
 }: NavbarMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const { data: session } = useSession();
 
   useEffect(() => {
     if (!isOpen) {
@@ -97,11 +94,11 @@ export default function NavbarMenu({
                 </button>
             </div>
 
-            {user ? (
+            {session?.user ? (
               <div className="mb-8 rounded-[22px] bg-black/5 px-4 py-3">
                 <p className="text-[12px] uppercase tracking-[0.14em] text-black/50">Connecté</p>
-                <p className="mt-1 text-[18px] font-semibold leading-tight text-black">{user.name ?? "Utilisateur"}</p>
-                {user.email ? <p className="mt-0.5 text-[14px] text-black/65">{user.email}</p> : null}
+                <p className="mt-1 text-[18px] font-semibold leading-tight text-black">{session.user.name ?? "Utilisateur"}</p>
+                {session.user.email ? <p className="mt-0.5 text-[14px] text-black/65">{session.user.email}</p> : null}
               </div>
             ) : null}
 
