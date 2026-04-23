@@ -31,6 +31,9 @@ jobs:
             DATABASE_URL=${{ secrets.DB_URL}}
             DATABASE_URL_DOCKER=${{ secrets.DB_DOCKER_URL }}
             GROQ_API_KEY=${{ secrets.GROQ_API_KEY }}
+            NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}
+            NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}
+            
             EOF
 
             echo "🐳 Rebuild et redémarrage..."
