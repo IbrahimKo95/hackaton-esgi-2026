@@ -1,15 +1,15 @@
-import { DistinctionType } from "@/app/generated/prisma/enums";
 import { z } from "zod";
 
 const requiredNonEmptyString = (field: string) =>
   z.string().trim().min(1, `${field} is required and must be a non-empty string.`);
+
+const referenceIdSchema = z.number({ error: "must be an integer reference id." }).int("must be an integer reference id.").positive("must be a positive integer.");
 
 export const createRestaurantSchema = z.object({
   name: requiredNonEmptyString("name"),
   link: z.string({ error: "link must be a string or null." }).trim().nullable().optional(),
   menu: z.string({ error: "menu must be a string or null." }).trim().nullable().optional(),
   priceRange: z.number().int("priceRange must be an integer >= 1.").min(1, "priceRange must be an integer >= 1."),
-  cuisineType: requiredNonEmptyString("cuisineType"),
   schedule: z.string({ error: "schedule must be a string or null." }).trim().nullable().optional(),
   seatingCap: z
     .number({ error: "seatingCap must be an integer or null." })
@@ -20,7 +20,8 @@ export const createRestaurantSchema = z.object({
       message: "seatingCap must be > 0 when provided.",
     }),
   imageUrl: z.string({ error: "imageUrl must be a string or null." }).trim().nullable().optional(),
-  ambiance: z.string({ error: "ambiance must be a string or null." }).trim().nullable().optional(),
+  ambiances: z.array(referenceIdSchema).max(8, "ambiances can contain at most 8 values.").optional(),
+  typesCuisine: z.array(referenceIdSchema).max(15, "typesCuisine can contain at most 15 values.").optional(),
   chefId: z.number({ error: "chefId must be an integer or null." }).int("chefId must be an integer or null.").nullable().optional(),
   address: z.object({
     street: requiredNonEmptyString("address.street"),
@@ -44,7 +45,6 @@ export const updateRestaurantSchema = z
       .int("priceRange must be an integer >= 1.")
       .min(1, "priceRange must be an integer >= 1.")
       .optional(),
-    cuisineType: requiredNonEmptyString("cuisineType").optional(),
     schedule: z.string({ error: "schedule must be a string or null." }).trim().nullable().optional(),
     seatingCap: z
       .number({ error: "seatingCap must be an integer or null." })
@@ -55,7 +55,8 @@ export const updateRestaurantSchema = z
         message: "seatingCap must be > 0 when provided.",
       }),
     imageUrl: z.string({ error: "imageUrl must be a string or null." }).trim().nullable().optional(),
-    ambiance: z.string({ error: "ambiance must be a string or null." }).trim().nullable().optional(),
+    ambiances: z.array(referenceIdSchema).max(8, "ambiances can contain at most 8 values.").optional(),
+    typesCuisine: z.array(referenceIdSchema).max(15, "typesCuisine can contain at most 15 values.").optional(),
     chefId: z.number({ error: "chefId must be an integer or null." }).int("chefId must be an integer or null.").nullable().optional(),
     address: z
       .object({
@@ -78,9 +79,7 @@ export const updateRestaurantSchema = z
 export type RestaurantPatchInput = z.infer<typeof updateRestaurantSchema>;
 
 export const distinctionPatchSchema = z.object({
-  type: z.nativeEnum(DistinctionType, {
-    message: `type must be one of: ${Object.values(DistinctionType).join(", ")}.`,
-  }),
+  type: z.string().min(1, "type is required."),
   year: z
     .number()
     .int("year must be an integer.")
