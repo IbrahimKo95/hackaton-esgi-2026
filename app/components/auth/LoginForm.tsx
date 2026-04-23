@@ -87,7 +87,7 @@ export default function LoginForm({ onClose }: Props) {
                             value={lastname}
                             onChange={e => setLastname(e.target.value)}
                             required
-                            className="w-full px-4 py-3 rounded-full border border-black"
+                            className="w-full px-4 py-3 rounded-full border border-black bg-white text-black placeholder:text-black/45"
                         />
                     </div>
                 )}
@@ -98,7 +98,7 @@ export default function LoginForm({ onClose }: Props) {
                         value={firstname}
                         onChange={e => setFirstname(e.target.value)}
                         required
-                        className="w-full px-4 py-3 rounded-full border border-black"
+                        className="w-full px-4 py-3 rounded-full border border-black bg-white text-black placeholder:text-black/45"
                     />
                 )}
 
@@ -110,7 +110,7 @@ export default function LoginForm({ onClose }: Props) {
                         value={email}
                         onChange={e => setEmail(e.target.value)}
                         required
-                        className="w-full px-4 py-3 rounded-full border border-black"
+                        className="w-full px-4 py-3 rounded-full border border-black bg-white text-black placeholder:text-black/45"
                     />
                 </div>
 
@@ -121,14 +121,14 @@ export default function LoginForm({ onClose }: Props) {
                         value={password}
                         onChange={e => setPassword(e.target.value)}
                         required
-                        className="w-full px-4 py-3 rounded-full border border-black"
+                        className="w-full px-4 py-3 rounded-full border border-black bg-white text-black placeholder:text-black/45"
                     />
                 </div>
 
                 <button
                     type="submit"
                     disabled={loading}
-                    className="text-lg w-full px-4 py-3 rounded-full border border-black"
+                    className="text-lg w-full px-4 py-3 rounded-full border border-black bg-white text-black"
                 >
                     {loading
                         ? 'Chargement...'
@@ -142,7 +142,7 @@ export default function LoginForm({ onClose }: Props) {
                 <button
                     type="button"
                     onClick={() => { setMode(mode === 'login' ? 'register' : 'login'); setError('') }}
-                    className="text-gray-900 font-medium underline underline-offset-2 hover:text-red-600 transition"
+                    className="text-black font-medium underline underline-offset-2 hover:text-red-600 transition"
                 >
                     {mode === 'login' ? 'Inscrivez vous' : 'Connectez vous'}
                 </button>
@@ -155,6 +155,7 @@ export default function LoginForm({ onClose }: Props) {
                     className="
             w-14 h-14 bg-white
             flex items-center justify-center
+            text-black
             hover:border-gray-300 hover:shadow-sm active:scale-95
             transition-all duration-150
           "
@@ -172,6 +173,7 @@ export default function LoginForm({ onClose }: Props) {
                     className="
             w-14 h-14 bg-white
             flex items-center justify-center
+            text-black
             hover:border-gray-300 hover:shadow-sm active:scale-95
             transition-all duration-150
           "
@@ -184,6 +186,7 @@ export default function LoginForm({ onClose }: Props) {
                     className="
             w-14 h-14 bg-white
             flex items-center justify-center
+            text-black
             hover:border-gray-300 hover:shadow-sm active:scale-95
             transition-all duration-150
           "
@@ -196,7 +199,7 @@ export default function LoginForm({ onClose }: Props) {
 
             {/* Mot de passe oublié */}
             {mode === 'login' && (
-                <button type="button" className="w-full text-center text-sm text-gray-400 underline underline-offset-2 mt-5 hover:text-gray-600 transition">
+                <button type="button" className="w-full text-center text-sm text-black underline underline-offset-2 mt-5 hover:text-gray-600 transition">
                     Mot de passe oublié
                 </button>
             )}
@@ -205,7 +208,7 @@ export default function LoginForm({ onClose }: Props) {
             <button
                 type="button"
                 onClick={onClose}
-                className="w-full text-center text-sm text-gray-400 mt-3 hover:text-gray-600 transition"
+                className="w-full text-center text-sm text-black mt-3 hover:text-gray-600 transition"
             >
                 Continuer en tant qu&apos;invité
             </button>

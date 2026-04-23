@@ -1,3 +1,4 @@
+import NavbarMenu from "@/components/navbar-menu";
 import { HttpError, toIntId } from "@/lib/server/http";
 import { getHotelById } from "@/lib/server/hotel/service";
 import { Figtree } from "next/font/google";
