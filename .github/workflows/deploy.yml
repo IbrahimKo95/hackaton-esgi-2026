@@ -30,6 +30,7 @@ jobs:
             POSTGRES_DB=${{ secrets.POSTGRES_DB }}
             DATABASE_URL=${{ secrets.DB_URL}}
             DATABASE_URL_DOCKER=${{ secrets.DB_DOCKER_URL }}
+            GROQ_API_KEY=${{ secrets.GROQ_API_KEY }}
             EOF
 
             echo "🐳 Rebuild et redémarrage..."
