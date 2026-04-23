@@ -6,11 +6,69 @@ import type {
   HotelPatchInput,
 } from "@/lib/server/schemas/hotel";
 
-export async function listHotels() {
+export async function listHotels(search?: string) {
+  const trimmedSearch = search?.trim();
+
   return prisma.hotel.findMany({
+    where: trimmedSearch
+      ? {
+        OR: [
+          {
+            name: {
+              contains: trimmedSearch,
+              mode: "insensitive",
+            },
+          },
+          {
+            address: {
+              is: {
+                city: {
+                  contains: trimmedSearch,
+                  mode: "insensitive",
+                },
+              },
+            },
+          },
+          {
+            address: {
+              is: {
+                country: {
+                  contains: trimmedSearch,
+                  mode: "insensitive",
+                },
+              },
+            },
+          },
+          {
+            address: {
+              is: {
+                street: {
+                  contains: trimmedSearch,
+                  mode: "insensitive",
+                },
+              },
+            },
+          },
+        ],
+      }
+      : undefined,
     include: {
       address: true,
       distinctions: true,
+      images: {
+        select: {
+          url: true,
+          alt: true,
+        },
+        orderBy: {
+          id: "asc",
+        },
+      },
+      _count: {
+        select: {
+          rooms: true,
+        },
+      },
     },
     orderBy: {
       createdAt: "desc",
@@ -24,6 +82,16 @@ export async function getHotelById(id: number) {
     include: {
       address: true,
       distinctions: true,
+      rooms: {
+        include: {
+          room: {
+            include: {
+              images: true,
+            },
+          },
+        },
+      },
+      images: true,
     },
   });
 
@@ -99,7 +167,7 @@ export async function upsertDistinction(hotelId: number, input: DistinctionPatch
 
   const current = await prisma.distinction.findFirst({
     where: {
-      hotelId: hotelId,
+      hotelId,
       year: input.year,
     },
     orderBy: {
@@ -116,7 +184,7 @@ export async function upsertDistinction(hotelId: number, input: DistinctionPatch
 
   return prisma.distinction.create({
     data: {
-      hotelId: hotelId,
+      hotelId,
       year: input.year,
       type: input.type,
     },
