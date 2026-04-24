@@ -2,6 +2,7 @@
 
 import { FormEvent, useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 type ChatCitation = {
     type: "restaurant" | "hotel";
@@ -49,6 +50,7 @@ function parseAssistantMessage(content: string) {
 }
 
 export default function ChatbotFab() {
+    const pathname = usePathname();
     const [isOpen, setIsOpen] = useState(false);
     const [isReservationOpen, setIsReservationOpen] = useState(false);
     const [messages, setMessages] = useState<ChatMessage[]>([
@@ -153,6 +155,10 @@ export default function ChatbotFab() {
             setIsStreaming(false);
         }
     };
+
+    if (pathname?.startsWith("/vertical")) {
+        return null;
+    }
 
     return (
         <>
