@@ -2,11 +2,8 @@ import HomeGuestAuthTrigger from "@/components/home-guest-auth-trigger";
 import HomeRailSection from "@/components/home-rail-section";
 import NavbarMenu from "@/components/navbar-menu";
 import { getHomeRecommendations, getHomeSections } from "@/lib/server/home";
-import { Figtree } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
-
-const figtree = Figtree({ subsets: ["latin"] });
 
 type HomePageProps = {
     searchParams?: { q?: string } | Promise<{ q?: string }>;
@@ -35,7 +32,7 @@ export default async function Home({ searchParams }: HomePageProps) {
         : [];
 
     return (
-        <main className={`${figtree.className} min-h-screen bg-[#f3f3f1] text-[#171717]`}>
+        <main className="min-h-screen bg-[#f3f3f1] text-[#171717] font-[var(--font-figtree)]">
             <div className="mx-auto w-full max-w-6xl px-4 pb-10 pt-4 sm:px-6 lg:px-8">
                 <section className="relative overflow-hidden rounded-b-[34px] rounded-t-[26px] shadow-[0_18px_35px_rgba(0,0,0,0.22)]">
                     <Image

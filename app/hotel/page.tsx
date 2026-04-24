@@ -1,11 +1,8 @@
 import NavbarMenu from "@/components/navbar-menu";
 import HotelCard from "@/components/hotel-card";
 import { listHotels } from "@/lib/server/hotel/service";
-import { Figtree } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
-
-const figtree = Figtree({ subsets: ["latin"] });
 
 type HotelPageProps = {
     searchParams?: { q?: string } | Promise<{ q?: string }>;
@@ -21,7 +18,7 @@ export default async function HotelPage({ searchParams }: HotelPageProps) {
     const hotels = await listHotels(q);
 
     return (
-        <main className={`${figtree.className} min-h-screen bg-gradient-to-b from-[#f4f4f4] to-white text-[#141414]`}>
+        <main className="min-h-screen bg-gradient-to-b from-[#f4f4f4] to-white text-[#141414] font-[var(--font-figtree)]">
             <section className="relative flex min-h-screen w-full flex-col overflow-hidden bg-white">
                 <header className="relative h-[235px] overflow-hidden">
                     <Image

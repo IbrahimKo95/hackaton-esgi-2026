@@ -9,6 +9,7 @@ import {
   getHotelById,
   updateHotel,
 } from "@/lib/server/hotel/service";
+import { deleteHotel } from "@/lib/server/admin/service";
 import { updateHotelSchema } from "@/lib/server/schemas/hotel";
 
 type Params = {
@@ -45,6 +46,20 @@ export async function PATCH(
 
     const updated = await updateHotel(hotelId, patch);
     return json({ data: updated });
+  } catch (cause) {
+    return handleRouteError(cause);
+  }
+}
+
+export async function DELETE(
+  _request: Request,
+  context: { params: Promise<Params> },
+) {
+  try {
+    await requireRole(["admin"]);
+    const { id } = await context.params;
+    await deleteHotel(toIntId(id));
+    return json({ success: true });
   } catch (cause) {
     return handleRouteError(cause);
   }

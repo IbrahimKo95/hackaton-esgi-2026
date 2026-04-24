@@ -9,6 +9,7 @@ import {
   getRestaurantById,
   updateRestaurant,
 } from "@/lib/server/restaurants/service";
+import { deleteRestaurant } from "@/lib/server/admin/service";
 import { updateRestaurantSchema } from "@/lib/server/schemas/restaurants";
 
 type Params = {
@@ -45,6 +46,20 @@ export async function PATCH(
 
     const updated = await updateRestaurant(restaurantId, patch);
     return json({ data: updated });
+  } catch (cause) {
+    return handleRouteError(cause);
+  }
+}
+
+export async function DELETE(
+  _request: Request,
+  context: { params: Promise<Params> },
+) {
+  try {
+    await requireRole(["admin"]);
+    const { id } = await context.params;
+    await deleteRestaurant(toIntId(id));
+    return json({ success: true });
   } catch (cause) {
     return handleRouteError(cause);
   }

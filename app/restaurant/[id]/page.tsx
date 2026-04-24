@@ -4,12 +4,9 @@ import { HttpError, toIntId } from "@/lib/server/http";
 import { getRestaurantById } from "@/lib/server/restaurants/service";
 import { listFullyBookedDatesForRestaurant } from "@/lib/server/reservations/service";
 import RestaurantReservationPanel from "@/app/components/restaurant/restaurant-reservation-panel";
-import { Figtree } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-
-const figtree = Figtree({ subsets: ["latin"] });
 
 type RestaurantDetailsPageProps = {
     params: { id: string } | Promise<{ id: string }>;
@@ -47,7 +44,7 @@ export default async function RestaurantDetailsPage({ params }: RestaurantDetail
     const fullyBookedDates = await listFullyBookedDatesForRestaurant(restaurant.id);
 
     return (
-        <main className={`${figtree.className} min-h-screen bg-gradient-to-b from-[#efefef] to-white text-[#141414]`}>
+        <main className="min-h-screen bg-gradient-to-b from-[#efefef] to-white text-[#141414] font-[var(--font-figtree)]">
             <section className="flex min-h-screen w-full flex-col overflow-hidden bg-white">
                 <header className="relative h-[235px] overflow-hidden">
                     <Image

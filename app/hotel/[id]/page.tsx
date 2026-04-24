@@ -1,12 +1,8 @@
-import NavbarMenu from "@/components/navbar-menu";
 import { HttpError, toIntId } from "@/lib/server/http";
 import { getHotelById } from "@/lib/server/hotel/service";
-import { Figtree } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-
-const figtree = Figtree({ subsets: ["latin"] });
 
 type HotelDetailsPageProps = {
     params: { id: string } | Promise<{ id: string }>;
@@ -54,7 +50,7 @@ export default async function HotelDetailsPage({ params }: HotelDetailsPageProps
             : [FALLBACK_HERO_IMAGE, ...FALLBACK_GALLERY_IMAGES];
 
     return (
-        <main className={`${figtree.className} min-h-screen bg-[#f5f5f5] text-[#141414]`}>
+        <main className="min-h-screen bg-[#f5f5f5] text-[#141414] font-[var(--font-figtree)]">
             <section className="mx-auto max-w-6xl px-4 pb-10 pt-5 sm:px-6 lg:px-8 lg:pb-14">
                 <Link
                     href="/hotel"

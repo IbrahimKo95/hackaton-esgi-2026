@@ -1,8 +1,5 @@
 import RestaurantMap from "@/components/restaurant-map";
 import { listRestaurants } from "@/lib/server/restaurants/service";
-import { Figtree } from "next/font/google";
-
-const figtree = Figtree({ subsets: ["latin"] });
 
 export default async function MapPage() {
     const restaurants = await listRestaurants();
@@ -21,7 +18,7 @@ export default async function MapPage() {
     }));
 
     return (
-        <main className={`${figtree.className} min-h-screen bg-[#f3f3f1] text-[#171717]`}>
+        <main className="min-h-screen bg-[#f3f3f1] text-[#171717] font-[var(--font-figtree)]">
             <RestaurantMap restaurants={mapRestaurants} />
         </main>
     );

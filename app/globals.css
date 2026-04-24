@@ -2,6 +2,7 @@
 
 :root {
     --primary: #7f1919;
+    --font-figtree: "Figtree", sans-serif;
 }
 
 @theme inline {
