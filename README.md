@@ -1,36 +1,81 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Guide Michelin
 
-## Getting Started
+Application de découverte de restaurants et hôtels étoilés avec système de réservations, programme de fidélité et chatbot IA.
 
-First, run the development server:
+## Stack technique
+
+- **Framework** — Next.js 16 (App Router)
+- **Base de données** — PostgreSQL + Prisma ORM
+- **Authentification** — NextAuth.js v4
+- **Styling** — Tailwind CSS v4
+- **IA** — LangChain + Groq (Llama 3.3 70B)
+- **Cartographie** — Leaflet + React Leaflet
+- **Validation** — Zod
+
+## Fonctionnalités
+
+- Exploration des restaurants avec distinction Michelin (1 à 3 étoiles, Bib Gourmand, Étoile Verte)
+- Liste et détail des hôtels (avec clés MICHELIN)
+- Réservation de tables dans les restaurants (date, heure, nombre de couverts)
+- Réservation de chambres d'hôtel (check-in, check-out, petit-déjeuner, late checkout)
+- Programme de fidélité (BASIC → PREMIUM) avec promotions et codes promo
+- Chatbot IA (Groq) pour recommandations personnalisées contextualisées
+- Carte interactive des restaurants (filtres par distinction, cuisine, ambiance)
+- Feed vertical (contenu social des établissements)
+- Backoffice admin complet — dashboard, gestion restaurants, hôtels, utilisateurs, réservations
+
+## Installation
 
 ```bash
+# Installer les dépendances
+npm install
+
+# Configurer les variables d'environnement
+cp .env.example .env
+# Puis éditer .env avec vos valeurs
+
+# Initialiser la base de données
+npx prisma db push
+
+# (Optionnel) Charger les données de démo (22 restaurants, 16 hôtels parisiens)
+npx prisma db push && npx prisma db seed
+
+# Lancer le serveur de développement
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Variables d'environnement
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Variable | Description |
+|----------|-------------|
+| `DATABASE_URL` | Connexion PostgreSQL (`postgresql://user:password@host:5432/db`) |
+| `NEXTAUTH_URL` | URL publique du site (`http://localhost:3000` en dev) |
+| `NEXTAUTH_SECRET` | Secret long et aléatoire pour signer les sessions |
+| `GROQ_API_KEY` | Clé API Groq (obligatoire pour le chatbot IA) |
+| `GROQ_MODEL` | Modèle Groq (optionnel, défaut : `llama-3.3-70b-versatile`) |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Comptes de test
 
-## Learn More
+Créez un compte via le formulaire d'inscription sur `/`. Pour accéder au backoffice admin, inscrivez-vous puis modifiez manuellement le `roleId` de votre utilisateur en base (1 = admin).
 
-To learn more about Next.js, take a look at the following resources:
+## Production
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Déployez sur [https://votre-domaine.com](https://votre-domaine.com).
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Un fichier deploy.yml est présent dans le .github afin de déployer automatiquement les changements commit sur la branch develop sur la prod
+## API routes principales
 
-## Deploy on Vercel
+| Route | Description |
+|-------|-------------|
+| `GET /api/restaurants` | Liste des restaurants |
+| `GET /api/restaurants/[id]` | Détail d'un restaurant |
+| `POST /api/restaurants/[id]/reservations` | Créer une réservation restaurant |
+| `GET /api/hotel` | Liste des hôtels |
+| `GET /api/hotel/[id]` | Détail d'un hôtel |
+| `POST /api/hotel/booking` | Créer une réservation hôtel |
+| `POST /api/chat` | Chatbot IA (Groq) |
+| `GET /api/user/fidelite` | Programme de fidélité |
+| `GET /api/admin/stats` | Dashboard admin |
+| `GET /api/admin/users` | Gestion utilisateurs |
+| `GET /api/admin/reservations` | Gestion réservations |
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
