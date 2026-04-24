@@ -24,14 +24,14 @@ export default async function Home({ searchParams }: HomePageProps) {
 
     const filteredRestaurants = trimmedQuery
         ? restaurants.filter((restaurant) => {
-              const query = trimmedQuery.toLowerCase();
+            const query = trimmedQuery.toLowerCase();
 
-              return (
-                  restaurant.name.toLowerCase().includes(query) ||
-                  restaurant.city.toLowerCase().includes(query) ||
-                  restaurant.address.toLowerCase().includes(query)
-              );
-          })
+            return (
+                restaurant.name.toLowerCase().includes(query) ||
+                restaurant.city.toLowerCase().includes(query) ||
+                restaurant.address.toLowerCase().includes(query)
+            );
+        })
         : [];
 
     return (

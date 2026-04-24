@@ -148,7 +148,7 @@ export default function VerticalFeed({ items }: VerticalFeedProps) {
             return "/";
         }
 
-        return activeItem.restaurant.link?.trim() || "/";
+        return `/restaurant/${activeItem.restaurant.id}`;
     }, [activeItem]);
 
     if (items.length === 0) {
